@@ -1,52 +1,46 @@
 import express, { Request, Response, NextFunction } from 'express';
 import v1 from './api/routes/v1';
-
 import bodyParser from 'body-parser';
 import { loggerMiddleware } from './api/middleware/loggerMiddleware';
-
 import { connectDB } from './prisma/prisma';
 import { connectRedis } from './redis/redis';
 import storage from './api/routes/storage';
-import questions from './api/routes/v1/questions/';
+import apiResponseHandler from './utils/apiResponseHandler';
 
 const app = express();
 
+// Determine environment
+const isProd = process.env.NODE_ENV === 'production';
+const PORT = process.env.PORT || (isProd ? 80 : 3000);
 
+// Middleware for parsing JSON bodies
 app.use(bodyParser.json());
 
-connectDB();
-
-connectRedis();
-
-
-
-
-app.use('/storage',storage)
-
-
-
-
-// Simple route at the root
-app.get('/', (req: Request, res: Response) => { 
-  res.send('Hello World!');
-});
-
-app.use('/api/v1', v1, (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong');
-});
-
-// logger middleware
+// Logger middleware (applied early)
 app.use(loggerMiddleware);
 
+// Initialize database and Redis connections
+connectDB();
+connectRedis();
+
+// Routes
+app.use('/storage', storage);
+app.use('/api/v1', v1);
 
 
 
+// Global error handler middleware
+app.use((err: any, _: Request, res: Response, next: NextFunction) => {
+  apiResponseHandler(res, {
+    statusCode: err.statusCode || 500,
+    hasError: true,
+    message: err.message,
+  });
+});
 
-
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT} in ${isProd ? 'production' : 'development'} mode.`);
 });
 
 export default app;
