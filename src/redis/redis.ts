@@ -1,8 +1,6 @@
 import Redis from 'ioredis';
-import dotenv from 'dotenv';
-
-dotenv.config();
-const redisUrl = process.env.REDIS_URL;
+import { appConfig } from '../utils/appConfig';
+const redisUrl = appConfig.REDIS_URL;
 if (!redisUrl) {
     console.error('REDIS_URL is not defined');
     process.exit(1);

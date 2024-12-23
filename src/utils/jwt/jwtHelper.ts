@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-import { config } from "dotenv";
-config();
+import { appConfig } from "../appConfig";
 
 interface JwtPayload {
     userId: string;
@@ -8,9 +7,9 @@ interface JwtPayload {
     exp: number;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const JWT_SECRET = appConfig.JWT_SECRET;
 
-const JWT_EXPIRES_MS = Number(process.env.JWT_EXPIRES_MS || '86400000');
+const JWT_EXPIRES_MS = Number(appConfig.JWT_EXPIRES_MS);
 
 export const generateToken = (userId: string): string => {
     const expiresIn = JWT_EXPIRES_MS;

@@ -6,12 +6,13 @@ import { connectDB } from './prisma/prisma';
 import { connectRedis } from './redis/redis';
 import storage from './api/routes/storage';
 import apiResponseHandler from './utils/apiResponseHandler';
+import { appConfig } from './utils/appConfig';
 
 const app = express();
 
 // Determine environment
-const isProd = process.env.NODE_ENV === 'production';
-const PORT = process.env.PORT || (isProd ? 80 : 3000);
+const isProd = appConfig.NODE_ENV === 'production';
+const PORT = appConfig.PORT || (isProd ? 80 : 3000);
 
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
