@@ -17,4 +17,8 @@ export const updateQuestionSchema = z.object({
 });
 
 
+export const getQuestionSchema = z.object({
+    "u": z.string().min(1, { message: "Username is required" }), 
+    "q": z.string().min(1, { message: "Question title is required" }),
+});
 

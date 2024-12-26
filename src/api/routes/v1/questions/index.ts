@@ -6,8 +6,11 @@ import createQuestion from './controller/createQuestion';
 import getQuestionById from './controller/getQuestionById';
 import deleteQuestion from './controller/deleteQuestion';
 import updateQuestion from './controller/updateQuestion';
+import getQuestionDetail from './controller/getQuestionDetail';
 
 const questionRouter = express.Router();
+
+questionRouter.get('/getQuestionDetails',getQuestionDetail)
 const questions = questionRouter.use(authMiddleware);
 
 questions.get('/',getQuestion);

@@ -42,7 +42,7 @@ function getQuestions(req, res) {
                 deleteAt: null
             }
         });
-        const currentUser = yield (0, getOneUser_1.getOneUserUtil)({ currentUserId: userId });
+        const currentUser = yield (0, getOneUser_1.getOneUserUtilById)({ currentUserId: userId });
         const questionParsed = questions.map((question) => {
             const { deleteAt } = question, questionWithoutDeleteAt = __rest(question, ["deleteAt"]);
             return Object.assign(Object.assign({}, questionWithoutDeleteAt), { url: userId ?

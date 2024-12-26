@@ -10,7 +10,9 @@ const createQuestion_1 = __importDefault(require("./controller/createQuestion"))
 const getQuestionById_1 = __importDefault(require("./controller/getQuestionById"));
 const deleteQuestion_1 = __importDefault(require("./controller/deleteQuestion"));
 const updateQuestion_1 = __importDefault(require("./controller/updateQuestion"));
+const getQuestionDetail_1 = __importDefault(require("./controller/getQuestionDetail"));
 const questionRouter = express_1.default.Router();
+questionRouter.get('/getQuestionDetails', getQuestionDetail_1.default);
 const questions = questionRouter.use(authMiddleware_1.authMiddleware);
 questions.get('/', getQuestion_1.default);
 questions.get('/:id', getQuestionById_1.default);

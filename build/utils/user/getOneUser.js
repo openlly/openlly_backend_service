@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOneUserUtil = getOneUserUtil;
+exports.getOneUserUtilById = getOneUserUtilById;
+exports.getOneUserByUsername = getOneUserByUsername;
 const prisma_1 = require("../../prisma/prisma");
 const redisUserHelper_1 = require("../../redis/user/redisUserHelper");
-function getOneUserUtil(_a) {
+function getOneUserUtilById(_a) {
     return __awaiter(this, arguments, void 0, function* ({ currentUserId }) {
         const user = yield (0, redisUserHelper_1.getUserFromRedis)(currentUserId);
         if (user) {
@@ -22,3 +23,14 @@ function getOneUserUtil(_a) {
         return currentUser;
     });
 }
+function getOneUserByUsername(_a) {
+    return __awaiter(this, arguments, void 0, function* ({ username }) {
+        const user = yield (0, redisUserHelper_1.getUserFromRedis)(username);
+        if (user) {
+            return user;
+        }
+        const currentUser = yield prisma_1.prisma.user.findUnique({ where: { username: username } });
+        return currentUser;
+    });
+}
+;

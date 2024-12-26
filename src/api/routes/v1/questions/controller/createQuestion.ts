@@ -21,6 +21,15 @@ export default async function createQuestion(req: Request, res: Response) {
         return;
     }
     const {title,content,gradient}=parsedResult.data;
+    const toCamelCase = (str: string) => 
+        str
+            .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+                if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+                return index === 0 ? match.toLowerCase() : match.toUpperCase();
+            })
+            .replace(/\s/g, "");
+    
+    const queryAbrivationUnqiue = toCamelCase(title);
     const question = await prisma.question.create({
         data: {
             id: uuidv4(),
@@ -28,7 +37,8 @@ export default async function createQuestion(req: Request, res: Response) {
             content,
             createdAt: new Date(),
             updatedAt: new Date(),
-            gradient: gradient
+            gradient: gradient,
+            questionAbrbreviation: queryAbrivationUnqiue
         },        
     });
     apiResponseHandler(res, {

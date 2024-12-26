@@ -9,5 +9,5 @@ const toCamelCase = (str) => str
     return index === 0 ? match.toLowerCase() : match.toUpperCase();
 })
     .replace(/\s/g, "");
-const questionUrl = (questionTitle, username) => `${appConfig_1.appConfig.BASE_URL}/${username}/${toCamelCase(questionTitle)}`;
+const questionUrl = (questionTitle, username) => `${appConfig_1.appConfig.APP_CLIENT_URL}/${username}/${toCamelCase(questionTitle)}`;
 exports.questionUrl = questionUrl;

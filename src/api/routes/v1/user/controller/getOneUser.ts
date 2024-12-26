@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getOneUserUtil } from '../../../../../utils/user/getOneUser';
+import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
@@ -14,7 +14,7 @@ export default async function getOneUser(req: Request, res: Response) {
         });
     }
 
-    const currentUser = await getOneUserUtil({ currentUserId });
+    const currentUser = await getOneUserUtilById({ currentUserId });
 
     if (currentUser) {
         return apiResponseHandler(res, {

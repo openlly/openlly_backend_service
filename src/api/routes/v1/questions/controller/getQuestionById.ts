@@ -1,7 +1,7 @@
 import {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
-import { getOneUserUtil } from '../../../../../utils/user/getOneUser';
+import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 import { questionUrl } from '../utils/questionUtils';
 
 export default async function getQuestionById(req: Request, res: Response) {
@@ -16,11 +16,11 @@ export default async function getQuestionById(req: Request, res: Response) {
         return; 
     }
     const question = await prisma.question.findUnique({ where: { id: id , deleteAt: null } });
-    const currentUser=await getOneUserUtil({currentUserId: userId}); 
+    const currentUser=await getOneUserUtilById({currentUserId: userId}); 
 
     const { deleteAt, ...questionWithoutDeleteAt } = question ?? {};
     //add url to question
-    const questionResponse = { ...questionWithoutDeleteAt, url:questionUrl(question?.title??"", currentUser?.username) };
+    const questionResponse = { ...questionWithoutDeleteAt, url:questionUrl(question?.questionAbrbreviation??"", currentUser?.username) };
      
     
     if (question) {

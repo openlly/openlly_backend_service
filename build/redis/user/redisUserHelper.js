@@ -16,15 +16,15 @@ exports.updateUserInRedis = exports.setUserInRedis = exports.removeUserFromRedis
 const redis_1 = require("../redis");
 const redisKeys_1 = __importDefault(require("../redisKeys"));
 // Function to get user and token from Redis (fetch)
-const getUserFromRedis = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserFromRedis = (idOrUsername) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Get the token from Redis using the user's id
-        const redisUserToken = yield redis_1.redis.get(redisKeys_1.default.userById(id));
+        // Get the token from Redis using the user's id or username
+        const redisUserToken = yield redis_1.redis.get(idOrUsername.match(/^\d+$/) ? redisKeys_1.default.userById(idOrUsername) : redisKeys_1.default.userByUsername(idOrUsername));
         if (redisUserToken) {
-            const ttl = yield redis_1.redis.ttl(redisKeys_1.default.userById(id));
+            const ttl = yield redis_1.redis.ttl(idOrUsername.match(/^\d+$/) ? redisKeys_1.default.userById(idOrUsername) : redisKeys_1.default.userByUsername(idOrUsername));
             if (ttl < 0) {
                 // Token expired, remove it from Redis
-                yield redis_1.redis.del(redisKeys_1.default.userById(id));
+                yield redis_1.redis.del(idOrUsername.match(/^\d+$/) ? redisKeys_1.default.userById(idOrUsername) : redisKeys_1.default.userByUsername(idOrUsername));
                 return null;
             }
             // User token found, return the token
@@ -42,6 +42,7 @@ const removeUserFromRedis = (id) => __awaiter(void 0, void 0, void 0, function* 
     try {
         // Remove the user and token from Redis using the user's id
         yield redis_1.redis.del(redisKeys_1.default.userById(id));
+        yield redis_1.redis.del(redisKeys_1.default.userByUsername(id));
     }
     catch (error) {
         console.error('Error removing user from Redis:', error);
@@ -53,8 +54,10 @@ const setUserInRedis = (id, user) => __awaiter(void 0, void 0, void 0, function*
     try {
         // Set the user and token in Redis using the user's id
         yield redis_1.redis.set(redisKeys_1.default.userById(id), JSON.stringify({ id, user }));
+        yield redis_1.redis.set(redisKeys_1.default.userByUsername(user.username), JSON.stringify({ id, user }));
     }
     catch (error) {
+        console.error('Error setting user in Redis:', error);
         console.error('Error setting user in Redis:', error);
         throw new Error('Error setting user in Redis');
     }
@@ -64,6 +67,7 @@ const updateUserInRedis = (id, user) => __awaiter(void 0, void 0, void 0, functi
     try {
         // Update the user in Redis using the user's id
         yield redis_1.redis.set(redisKeys_1.default.userById(id), JSON.stringify({ id, user }));
+        yield redis_1.redis.set(redisKeys_1.default.userByUsername(user.username), JSON.stringify({ id, user }));
     }
     catch (error) {
         console.error('Error updating user in Redis:', error);

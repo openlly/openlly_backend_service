@@ -2,7 +2,7 @@ import express, {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { questionUrl } from '../utils/questionUtils';
-import { getOneUserUtil } from '../../../../../utils/user/getOneUser';
+import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 
 export default async function getQuestions(req: Request, res: Response) {
@@ -18,13 +18,13 @@ export default async function getQuestions(req: Request, res: Response) {
             deleteAt: null
         }
     });
-    const currentUser=await getOneUserUtil({currentUserId: userId}); 
+    const currentUser=await getOneUserUtilById({currentUserId: userId}); 
     const questionParsed = questions.map((question) => {
         const { deleteAt, ...questionWithoutDeleteAt } = question;
         return {
             ...questionWithoutDeleteAt,
             url:userId?
-             questionUrl(question.title, currentUser.username):undefined,
+             questionUrl(question.questionAbrbreviation, currentUser.username):undefined,
              
         };
     });
