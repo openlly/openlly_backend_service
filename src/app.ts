@@ -6,7 +6,8 @@ import { connectDB } from './prisma/prisma';
 import { connectRedis } from './redis/redis';
 import apiResponseHandler from './utils/apiResponseHandler';
 import { appConfig } from './utils/appConfig';
-import cors from 'cors'; // <---
+import cors from 'cors';
+import rateLimit from 'express-rate-limit'; // <---
 
 const app = express();
 
@@ -26,6 +27,14 @@ app.use(cors({ origin: true }));
 // Initialize database and Redis connections
 connectDB();
 connectRedis();
+
+// Apply rate limiter
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 100, // 100 requests per 5 minutes
+  message: 'Too many requests. Please try again later.',
+});
+app.use(limiter);
 
 // Routes
 app.use('/api/v1', v1);
