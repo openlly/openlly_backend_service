@@ -11,7 +11,6 @@ WORKDIR /usr/app
 COPY . .
 COPY prisma ./prisma
 
-RUN npx prisma generate
 
 RUN npm ci
 
