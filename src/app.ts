@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import { loggerMiddleware } from './api/middleware/loggerMiddleware';
 import { connectDB } from './prisma/prisma';
 import { connectRedis } from './redis/redis';
-import storage from './api/routes/storage';
 import apiResponseHandler from './utils/apiResponseHandler';
 import { appConfig } from './utils/appConfig';
 
@@ -25,7 +24,6 @@ connectDB();
 connectRedis();
 
 // Routes
-app.use('/storage', storage);
 app.use('/api/v1', v1);
 
 

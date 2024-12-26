@@ -8,6 +8,10 @@ export const appConfig = {
     REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
     NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: process.env.PORT || 3000,
-    GROQ_API_KEY: process.env.GROQ_API_KEY
-};
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    CLOUDINARY_URL: process.env.CLOUDINARY_URL
+}
 
