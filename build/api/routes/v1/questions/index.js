@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const getQuestion_1 = __importDefault(require("./controller/getQuestion"));
+const authMiddleware_1 = require("../../../middleware/authMiddleware");
+const createQuestion_1 = __importDefault(require("./controller/createQuestion"));
+const getQuestionById_1 = __importDefault(require("./controller/getQuestionById"));
+const deleteQuestion_1 = __importDefault(require("./controller/deleteQuestion"));
+const updateQuestion_1 = __importDefault(require("./controller/updateQuestion"));
+const questionRouter = express_1.default.Router();
+const questions = questionRouter.use(authMiddleware_1.authMiddleware);
+questions.get('/', getQuestion_1.default);
+questions.get('/:id', getQuestionById_1.default);
+questions.post('/create', createQuestion_1.default);
+questions.patch('/update/:id', updateQuestion_1.default);
+questions.delete('/delete/:id', deleteQuestion_1.default);
+exports.default = questionRouter;

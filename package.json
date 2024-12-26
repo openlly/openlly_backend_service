@@ -7,12 +7,19 @@
     "gts": "^6.0.2",
     "nodemon": "^3.0.1",
     "prisma": "^6.1.0",
+    "ts-node": "^10.9.1",
     "typescript": "^5.7.2"
   },
   "main": "app.ts",
   "scripts": {
-    "start": "nodemon src/app.ts",
-    "build": "tsc"
+    "dev": "NODE_ENV=local nodemon src/app.ts",
+    "build": "tsc --project ./",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write . --config ./.prettierrc.json",
+    "prestart": "tsc",
+    "postbuild": "tsc --project ./",
+    "start": "node build/app.js"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
@@ -27,6 +34,7 @@
     "multer": "^1.4.5-lts.1",
     "postgres": "^3.4.5",
     "uuid": "^11.0.3",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "ts-node": "^10.9.1"
   }
 }
