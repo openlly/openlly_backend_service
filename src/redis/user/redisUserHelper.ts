@@ -26,17 +26,33 @@ export const getUserFromRedis = async (id: string) => {
   }
 };
 
-export const setUserInRedis = async (id: string, token: string, user: object) => {
+
+export const removeUserFromRedis = async (id: string) => {
+  try {
+    // Remove the user and token from Redis using the user's id
+    await redis.del(redisKeys.userById(id));
+  } catch (error) {
+    console.error('Error removing user from Redis:', error);
+    throw new Error('Error removing user from Redis');
+  }
+};
+
+export const setUserInRedis = async (id: string, user: object) => {
   try {
     // Set the user and token in Redis using the user's id
-    await redis.set(
-      redisKeys.userById(id),
-      JSON.stringify({ user, token }),
-      'EX',
-      120,
-    );
+    await redis.set(redisKeys.userById(id), JSON.stringify({ id, user }));
   } catch (error) {
     console.error('Error setting user in Redis:', error);
     throw new Error('Error setting user in Redis');
+  }
+};
+
+export const updateUserInRedis = async (id: string, user: object) => {
+  try {
+    // Update the user in Redis using the user's id
+    await redis.set(redisKeys.userById(id), JSON.stringify({ id, user }));
+  } catch (error) {
+    console.error('Error updating user in Redis:', error);
+    throw new Error('Error updating user in Redis');
   }
 };

@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { prisma } from '../../../../../prisma/prisma';
 import { v4 as UUID } from 'uuid';
-import { userResponseHandler } from '../../../../../utils/userResponseHelper';
+import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
 export default async function uploadProfileAvatar(req: Request, res: Response) {
     //check if file exists

@@ -1,56 +1,33 @@
-
-import  { Request, Response } from 'express';   
-
-
-import apiResponseHandler from '../../../../../utils/apiResponseHandler'; 
-import { getUserFromRedis } from '../../../../../redis/user/redisUserHelper';
-import {userResponseHandler} from "../../../../../utils/userResponseHelper";
-import { prisma } from '../../../../../prisma/prisma';
-
+import { Request, Response } from 'express';
+import { getOneUserUtil } from '../../../../../utils/user/getOneUser';
+import apiResponseHandler from '../../../../../utils/apiResponseHandler';
+import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
 export default async function getOneUser(req: Request, res: Response) {
-    var currentUserId = (req as any).user?.userId;
-    
-    if(!currentUserId){
-        apiResponseHandler(res, {
+    const currentUserId = (req as any).user?.userId || req.params.id;
+
+    if (!currentUserId) {
+        return apiResponseHandler(res, {
             statusCode: 401,
             hasError: true,
             message: 'Unauthorized',
         });
-        return;
     }
-    if(req.params.id){
-        currentUserId= req.params.id;
-    }
-    //check if user exists in redis
-    const user = await getUserFromRedis(currentUserId);
-    if(user){
-        apiResponseHandler(res, {
-            statusCode: 200,
-            hasError: false,
-            message: 'success',
-            data: userResponseHandler(user.user),
-        });
-        return;
-    }
-    const currentUser = await prisma.user.findUnique({ where: { id: currentUserId } });
+
+    const currentUser = await getOneUserUtil({ currentUserId });
+
     if (currentUser) {
-        apiResponseHandler(res, {
+        return apiResponseHandler(res, {
             statusCode: 200,
             hasError: false,
             message: 'success',
             data: userResponseHandler(currentUser),
         });
-        return;
     }
-    apiResponseHandler(res, {
+
+    return apiResponseHandler(res, {
         statusCode: 404,
         hasError: true,
         message: 'User not found',
     });
-    return;
-    
-
-    
-    
 }

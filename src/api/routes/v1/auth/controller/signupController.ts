@@ -52,7 +52,7 @@ export default async function signupController(
         const token = generateToken(user.id);
 
         // Cache the user and token in Redis
-        await setUserInRedis(user.id, token, user); // Helper to save user and token in Redis
+        await setUserInRedis(user.id, user); // Helper to save user and token in Redis
 
         // Return the response
         apiResponseHandler(res, {

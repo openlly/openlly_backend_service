@@ -4,7 +4,7 @@ import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { generateToken } from '../../../../../utils/jwt/jwtHelper';
 import { prisma } from '../../../../../prisma/prisma';
 import { verifyPassword } from '../../../../../utils/bcrypt/password';
-import { userResponseHandler } from '../../../../../utils/userResponseHelper';
+import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token
 
 export default async function loginController(
@@ -65,7 +65,7 @@ export default async function loginController(
         token = generateToken(dbUser.id);
 
         // Cache the user data and token in Redis for future use, with an expiration of 1 hour
-        await setUserInRedis(dbUser.id, token, dbUser); // Helper to save user and token in Redis
+        await setUserInRedis(dbUser.id,  dbUser); // Helper to save user and token in Redis
 
         // Remove sensitive data (e.g., password) from the user object
         const userWithoutPassword = userResponseHandler(dbUser);

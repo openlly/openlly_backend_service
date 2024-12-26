@@ -27,5 +27,7 @@ JWT_EXPIRES_MS=86400000
 BASE_URL=http://localhost:3000
 DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres   
 REDIS_URL=redis://localhost:6379
+GROQ_API_KEY=<GROQ API KEY>
 ```
+
 

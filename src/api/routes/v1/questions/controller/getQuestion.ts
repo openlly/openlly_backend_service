@@ -2,6 +2,7 @@ import express, {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { questionUrl } from '../utils/questionUtils';
+import { getOneUserUtil } from '../../../../../utils/user/getOneUser';
 
 
 export default async function getQuestions(req: Request, res: Response) {
@@ -17,15 +18,18 @@ export default async function getQuestions(req: Request, res: Response) {
             deleteAt: null
         }
     });
+    const currentUser=await getOneUserUtil({currentUserId: userId}); 
     const questionParsed = questions.map((question) => {
         const { deleteAt, ...questionWithoutDeleteAt } = question;
         return {
             ...questionWithoutDeleteAt,
             url:userId?
-             questionUrl(question.id, userId):undefined,
+             questionUrl(question.title, currentUser.username):undefined,
              
         };
     });
+    
+
     apiResponseHandler(res,{
         hasError:false,
         statusCode:200,

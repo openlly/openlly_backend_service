@@ -51,6 +51,7 @@ export default function apiResponseHandler(
   const finalMessage = hasError ? message || 'Something went wrong' : message || 'Success';
   const finalErrorCode = hasError ? defaultMessages[statusCode] : null;
   const finalTokenExpired = tokenExpired || null;
+  
 
   // Default API response structure
   const apiResponse: APIResponse = {
@@ -72,6 +73,8 @@ export default function apiResponseHandler(
 
   // Remove empty values (null, undefined, empty string) from the response
   const cleanedResponse = removeEmptyValues(apiResponse);
+  // Log response
+  console.log('API Response:', cleanedResponse);
 
   // Send the API response
   return res.status(apiResponse.status).json(cleanedResponse);

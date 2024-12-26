@@ -16,6 +16,7 @@ datasource db {
 
 model User {
   id      String @id
+  username   String?  @unique
   email   String @unique
   password String
   createdAt DateTime @default(now())
@@ -47,4 +48,10 @@ model Response {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   answerTo   String
+}
+
+model Username{
+    id String @id
+    username String @unique
+    usedAt DateTime?
 }

@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import auth from './auth';
 import user from './user';  
-import questions from './questions';
+import questionRouter from './questions';
 import answers from './answer';
+import username from './username';
 
 
 
@@ -15,8 +16,9 @@ v1.get('/status', (req: Request, res: Response) => {
 
 v1.use('/auth', auth);
 v1.use('/user', user);
-v1.use('/question',questions);
+v1.use('/question',questionRouter);
 v1.use('/answer', answers);
+v1.use('/username', username);
 
 export default v1;  
 

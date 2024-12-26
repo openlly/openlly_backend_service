@@ -7,16 +7,14 @@ import getQuestionById from './controller/getQuestionById';
 import deleteQuestion from './controller/deleteQuestion';
 import updateQuestion from './controller/updateQuestion';
 
-const questions = express.Router();
-
+const questionRouter = express.Router();
+const questions = questionRouter.use(authMiddleware);
 
 questions.get('/',getQuestion);
 questions.get('/:id',getQuestionById);
-
-const questionProtactivePaths= questions.use(authMiddleware);
-questionProtactivePaths.post('/create',createQuestion);
-questionProtactivePaths.patch('/update/:id',updateQuestion);
-questionProtactivePaths.delete('/delete/:id',deleteQuestion);
+questions.post('/create',createQuestion);
+questions.patch('/update/:id',updateQuestion);
+questions.delete('/delete/:id',deleteQuestion);
 
 
-export default questions;
+export default questionRouter;
