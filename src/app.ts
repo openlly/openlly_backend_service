@@ -21,7 +21,21 @@ app.use(bodyParser.json());
 app.use(loggerMiddleware);
 
 // Enable CORS
-app.use(cors({  }));
+const allowedOrigins = [
+  'https://openlly.netlify.app',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+  })
+);
 
 // Initialize database and Redis connections
 connectDB();
