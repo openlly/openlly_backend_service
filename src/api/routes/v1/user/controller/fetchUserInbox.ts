@@ -32,6 +32,9 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
             },
             deleteAt: null,
         },
+        orderBy: {
+            createdAt: 'desc',
+        },
         skip,
         take: limit,
     });
@@ -39,6 +42,7 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         const question = fetchQuestions.find((question) => question.id === answer.questionId);
         return {
             ...answer,
+            seen: answer.seen === null ? false : answer.seen,
             question: question ? { ...question, deleteAt: undefined, } : null,
             questionId: undefined,
             answerId: undefined,

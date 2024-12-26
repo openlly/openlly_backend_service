@@ -1,5 +1,5 @@
 
-import express, {Response, Request} from 'express';
+import express from 'express';
 import createAnswer from './controller/createAnswer';
 
 
