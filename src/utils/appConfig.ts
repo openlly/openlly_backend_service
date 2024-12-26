@@ -5,7 +5,6 @@ export const appConfig = {
     JWT_EXPIRES_MS: Number(process.env.JWT_EXPIRES_MS) || 86400000,
     BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
     DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
-    REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
     NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: process.env.PORT || 3000,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
@@ -13,6 +12,8 @@ export const appConfig = {
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_URL: process.env.CLOUDINARY_URL,
-    APP_CLIENT_URL : process.env.APP_CLIENT_URL
+    APP_CLIENT_URL : process.env.APP_CLIENT_URL,
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT
 }
 

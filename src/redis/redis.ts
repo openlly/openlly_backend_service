@@ -1,19 +1,20 @@
 import Redis from 'ioredis';
 import { appConfig } from '../utils/appConfig';
-const redisUrl = appConfig.REDIS_URL;
-if (!redisUrl) {
-    console.error('REDIS_URL is not defined');
+
+// Fetch Redis host and port from configuration or environment variables
+const redisHost = appConfig.REDIS_HOST;
+const redisPort = Number(appConfig.REDIS_PORT);
+
+if (!redisHost || !redisPort) {
+    console.error('Redis host or port is not defined');
     process.exit(1);
 }
 
-const redis = new Redis(redisUrl, {
-    retryStrategy: (times: number) => {
-        const delay = Math.min(times * 50, 2000);
-        console.log(`Redis connection failed. Trying again after ${delay}ms`);
-        return delay;
-    },
+// Create a Redis client instance with the host and port
+const redis = new Redis({
+    host: redisHost,
+    port: redisPort, 
 });
-
 const connectRedis = async () => {
     try {
         // Check if Redis is already connected or connecting
@@ -25,7 +26,6 @@ const connectRedis = async () => {
         }
     } catch (error) {
         console.error('Error connecting to Redis:', error);
-     
     }
 };
 

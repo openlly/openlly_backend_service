@@ -9,6 +9,9 @@ WORKDIR /usr/app
 
 # Install app dependencies
 COPY . .
+COPY prisma ./prisma
+
+RUN npx prisma generate
 
 RUN npm ci
 
