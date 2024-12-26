@@ -7,6 +7,7 @@ import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { prisma } from '../../../../../prisma/prisma';
 import { getQuestionSchema } from '../schema/schema';
 import { getOneUserByUsername } from '../../../../../utils/user/getOneUser';
+import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
 
 export default async function getQuestionDetail(req: Request, res: Response) {
@@ -47,7 +48,7 @@ export default async function getQuestionDetail(req: Request, res: Response) {
         message: 'success',
         data: {
             ...questionDetail,
-            user: user
+            user: userResponseHandler(user)
         
         },
     });

@@ -1,4 +1,3 @@
-import { appConfig } from '../appConfig';
 
 export const userResponseHandler = (user: any) => {
   const { password, ...rest } = user;
