@@ -23,7 +23,6 @@ export default async function generateUsername(req: Request, res: Response) {
 
     try {
        const response=await groq.chat.completions.create({
-        
          messages: [
             {
                 role: "system",

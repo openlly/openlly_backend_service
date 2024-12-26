@@ -6,6 +6,7 @@ import { connectDB } from './prisma/prisma';
 import { connectRedis } from './redis/redis';
 import apiResponseHandler from './utils/apiResponseHandler';
 import { appConfig } from './utils/appConfig';
+import cors from 'cors'; // <---
 
 const app = express();
 
@@ -18,6 +19,9 @@ app.use(bodyParser.json());
 
 // Logger middleware (applied early)
 app.use(loggerMiddleware);
+
+// Enable CORS
+app.use(cors({  }));
 
 // Initialize database and Redis connections
 connectDB();
