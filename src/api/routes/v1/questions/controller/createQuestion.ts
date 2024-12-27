@@ -1,7 +1,7 @@
-import  {Response, Request} from 'express';
+import { Response, Request } from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
-import {createQuestionSchema} from '../schema/schema';
+import { createQuestionSchema } from '../schema/schema';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -20,15 +20,16 @@ export default async function createQuestion(req: Request, res: Response) {
         });
         return;
     }
-    const {title,content,gradient}=parsedResult.data;
-    const toCamelCase = (str: string) => 
+    const { title, content, gradient } = parsedResult.data;
+    const toCamelCase = (str: string) =>
         str
+            .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters
             .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
-                if (+match === 0) return ""; // or if (/\s+/.test(match)) for white spaces
+                if (+match === 0) return ""; // Skip numbers
                 return index === 0 ? match.toLowerCase() : match.toUpperCase();
             })
-            .replace(/\s/g, "");
-    
+            .replace(/\s/g, ""); // Remove spaces
+
     const queryAbrivationUnqiue = toCamelCase(title);
     const question = await prisma.question.create({
         data: {
@@ -39,7 +40,7 @@ export default async function createQuestion(req: Request, res: Response) {
             updatedAt: new Date(),
             gradient: gradient,
             questionAbrbreviation: queryAbrivationUnqiue
-        },        
+        },
     });
     apiResponseHandler(res, {
         statusCode: 200,
