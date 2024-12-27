@@ -1,6 +1,8 @@
 import  { Request, Response } from 'express';   
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
+import { questionUrl } from '../../questions/utils/questionUtils';
+import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 export const fetchUserInbox = async (req: Request, res: Response) => {
     const userId = (req as any).user?.userId;
@@ -12,6 +14,7 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         });
         return;
     }
+    const user =await getOneUserUtilById({currentUserId: userId});
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 10;
     const skip = (page - 1) * limit;
@@ -43,9 +46,7 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         return {
             ...answer,
             seen: answer.seen === null ? false : answer.seen,
-            question: question ? { ...question, deleteAt: undefined, } : null,
-            questionId: undefined,
-            answerId: undefined,
+            question: question ? { ...question, url: questionUrl(question.questionAbrbreviation, user.username) } : null,
         };
     });
     apiResponseHandler(res, {
