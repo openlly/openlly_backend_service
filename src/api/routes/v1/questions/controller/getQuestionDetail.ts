@@ -48,7 +48,10 @@ export default async function getQuestionDetail(req: Request, res: Response) {
         message: 'success',
         data: {
             ...questionDetail,
-            user: userResponseHandler(user)
+            user: {
+                ...userResponseHandler(user),
+                email: undefined     
+            }
         
         },
     });
