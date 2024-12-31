@@ -33,7 +33,6 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
             html
         });
         return !!info.messageId;
-        return true
     } catch (err) {
         console.error(err);
         return false;

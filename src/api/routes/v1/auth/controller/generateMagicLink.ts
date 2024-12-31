@@ -24,7 +24,7 @@ export async function generateMagicLink(req: Request, res: Response) {
 
             const email = schema.data.email;
             const magicToken = crypto.randomBytes(32).toString('hex');
-            const verificationLink = `${appConfig.APP_CLIENT_URL}/emailVerification/${magicToken}`;
+            const verificationLink = `${appConfig.APP_CLIENT_URL}/emailVerification/${magicToken}?email=${email}`;
             const emailAck = await sendEmail(
                 email,
                 "Verify your email address",
