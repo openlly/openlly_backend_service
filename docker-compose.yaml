@@ -28,10 +28,15 @@ services:
       RABBITMQ_DEFAULT_USER: openlly
       RABBITMQ_DEFAULT_PASS: openlly
     ports:
-      - "15672:15672"   # Management UI
-      - "5672:5672"     # AMQP protocol
+      - "15672:15672"
+      - "5672:5672"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build:
