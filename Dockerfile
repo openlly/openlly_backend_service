@@ -6,6 +6,9 @@ WORKDIR /app
 # Copy package.json and package-lock.json (or yarn.lock) to install dependencies
 COPY package*.json ./
 
+# Clean up the node_modules folder to ensure only production dependencies are included
+RUN rm -rf node_modules
+
 # Install dependencies (including dev dependencies for the build step)
 RUN npm install
 
@@ -15,8 +18,7 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build  # This uses tsc to output into the dist folder
 
-# Clean up the node_modules folder to ensure only production dependencies are included
-RUN rm -rf node_modules
+
 
 # Step 2: Production Stage
 FROM node:20-slim
