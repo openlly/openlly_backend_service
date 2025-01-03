@@ -19,8 +19,5 @@ RUN chmod +x /usr/app/wait-for-it.sh
 RUN npm ci
 RUN npm run build
 
-# Expose application port
-EXPOSE 3001
-
 # Define the default command to start the app
 CMD ["npm", "start"]
