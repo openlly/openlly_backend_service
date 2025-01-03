@@ -25,7 +25,7 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write . --config ./.prettierrc.json",
     "prestart": "tsc",
-    "start": "node build/app.js"
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
