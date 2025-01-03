@@ -1,19 +1,34 @@
-# Use Node.js 20 Alpine image for smaller image size
-FROM node:20-alpine
+# Step 1: Build Stage
+FROM node:20 AS build
 
-# Update package index
-RUN apk update
+WORKDIR /app
 
-# Set working directory
-WORKDIR /usr/app
+# Copy package.json and package-lock.json (or yarn.lock) to install dependencies
+COPY package*.json ./
 
-# Copy application files to the container
+# Install dependencies
+RUN npm install --production
+
+# Copy all the app files
 COPY . .
-COPY prisma ./prisma
 
-# Install dependencies and build the app
-RUN npm ci
+# Build the TypeScript code
 RUN npm run build
 
-# Define the default command to start the app
-CMD ["npm", "start"]
+# Step 2: Production Stage
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install only production dependencies (skip dev dependencies)
+COPY --from=build /app/package*.json ./
+RUN npm install --production
+
+# Copy the built app files from the build stage
+COPY --from=build /app/build /app/build
+
+# Expose the port that your app will run on
+EXPOSE 3001
+
+# Command to start the app in production mode
+CMD ["node", "build/app.js"]

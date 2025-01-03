@@ -34,7 +34,14 @@ services:
       - app-network
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
       - "3001:3001"
     depends_on:
@@ -43,9 +50,6 @@ services:
       - rabbitmq
     env_file:
       - .env
-    environment:
-      - NODE_ENV=production  # Set to production mode
-    command: ["npm", "run", "start"] # Use production script
     networks:
       - app-network
 
