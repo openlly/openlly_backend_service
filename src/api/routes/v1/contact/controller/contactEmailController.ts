@@ -3,6 +3,7 @@ import apiResponseHandler from "../../../../../utils/apiResponseHandler";
 import { contactUsSchema } from "../schema/schema";
 import { sendEmail } from "../../../../../utils/emailer/node-emailer";
 import { contactUsTemplate } from "../../../../../templates/contact-us";
+import { appConfig } from "../../../../../utils/appConfig";
 
 
 export const contactEmailController = async (req: Request, res: Response) => {
@@ -20,7 +21,7 @@ export const contactEmailController = async (req: Request, res: Response) => {
      }
      //send email
      const emailAck = await sendEmail(
-         schema.data.email,
+         appConfig.ADMIN_EMAIL || "admin",
          "You have a new message",
          contactUsTemplate(
              schema.data.name,

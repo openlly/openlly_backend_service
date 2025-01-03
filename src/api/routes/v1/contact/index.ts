@@ -12,7 +12,7 @@ const contactUsRateLimiter = rateLimit({
 const contactRouter = express.Router();
 contactRouter.use(contactUsRateLimiter);
 
-contactRouter.get("/", contactEmailController);
+contactRouter.post("/", contactEmailController);
 
 export default contactRouter;
 

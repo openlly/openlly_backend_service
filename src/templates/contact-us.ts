@@ -58,6 +58,12 @@ export const contactUsTemplate = (name: string, email: string, message: string) 
                 color: #0062cc;
                 font-weight: bold;
             }
+            .logo {
+              color: #ee0979;
+              font-weight: bold;
+              font-size: 24px;
+              margin-bottom: 20px;
+          }
         </style>
     </head>
     <body>

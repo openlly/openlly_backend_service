@@ -22,7 +22,8 @@ export const appConfig = {
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
-    MAGIC_LINK_TTL : Number(process.env.MAGIC_LINK_TTL)
+    MAGIC_LINK_TTL : Number(process.env.MAGIC_LINK_TTL),
+    ADMIN_EMAIL : process.env.ADMIN_EMAIL
 
 }
 
