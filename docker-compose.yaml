@@ -43,7 +43,9 @@ services:
       - rabbitmq
     env_file:
       - .env
-    command: ["npm", "run", "dev"]
+    environment:
+      - NODE_ENV=production  # Set to production mode
+    command: ["npm", "run", "start"] # Use production script
     networks:
       - app-network
 
