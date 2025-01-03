@@ -5,7 +5,8 @@ import  crypto from 'crypto';
 import schemas from '../validations/authValidations';
 import { appConfig, isDevEnv } from "../../../../../utils/appConfig";
 import { emailVerifcationTemplate } from "../../../../../templates/email-verification";
-import { sendEmail } from "../../../../../utils/emailer/node-emailer";
+import { addToEmailQueue } from "../../../../../utils/queueService/notification";
+import { getOneUserByEmail } from "../../../../../utils/user/getOneUser";
 
 
 
@@ -21,23 +22,13 @@ export async function generateMagicLink(req: Request, res: Response) {
             });
             return;
         }
+            const user =await getOneUserByEmail({email: schema.data.email});
+            const isUserExist = user?true:false;
 
             const email = schema.data.email;
             const magicToken = crypto.randomBytes(32).toString('hex');
             const verificationLink = `${appConfig.APP_CLIENT_URL}/emailVerification/${magicToken}?email=${email}`;
-            const emailAck = await sendEmail(
-                email,
-                "Verify your email address",
-                emailVerifcationTemplate(verificationLink, false)
-            );
-            if(!emailAck){
-                apiResponseHandler(res, {
-                    statusCode: 500,
-                    hasError: true,
-                    message: 'Email could not be sent',
-                });
-                return;
-            }
+            addToEmailQueue(email, "Verify your email address", emailVerifcationTemplate(verificationLink, isUserExist));
             await redis.set(`${email}:magicToken`, magicToken, 'EX', appConfig.MAGIC_LINK_TTL);
             apiResponseHandler(res, {
                 statusCode: 200,

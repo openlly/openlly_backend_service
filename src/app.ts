@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import v1 from './api/routes/v1';
 import bodyParser from 'body-parser';
 import { loggerMiddleware } from './api/middleware/loggerMiddleware';
@@ -8,7 +8,7 @@ import apiResponseHandler from './utils/apiResponseHandler';
 import { appConfig } from './utils/appConfig';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit'; // <---
-
+import mqConnection from './utils/queueService/connection';
 const app = express();
 
 // Determine environment
@@ -24,9 +24,10 @@ app.use(loggerMiddleware);
 // Enable CORS
 app.use(cors({ origin: true }));
 
-// Initialize database and Redis connections
+// Initialize database, Redis connections  and RabbitMQ
 connectDB();
 connectRedis();
+mqConnection.connect();
 
 // Apply rate limiter
 const limiter = rateLimit({
@@ -46,6 +47,7 @@ app.use((_, res) => {
     message: 'Route not found',
   });
 });
+
 
 
 // Start the server

@@ -1,21 +1,13 @@
 import { prisma } from "../../prisma/prisma";
 import { getUserFromRedis } from "../../redis/user/redisUserHelper";
 
-export async function  getOneUserUtilById({currentUserId}: {currentUserId: string}){
-    const user = await getUserFromRedis(currentUserId);
-    if(user){
-        return user;
-       
-    }
-    const currentUser = await prisma.user.findUnique({ where: { id: currentUserId } });
-    return currentUser;
-}
-export async function  getOneUserByUsername({username}: {username: string}){
-    const user = await getUserFromRedis(username);
-    if(user){
-        return user;
-       
-    }
-    const currentUser = await prisma.user.findUnique({ where: { username: username } });
-    return currentUser;  
-};
+export const getOneUserUtilById = async ({ currentUserId }: { currentUserId: string }) =>
+  (await getUserFromRedis(currentUserId)) ||
+  prisma.user.findUnique({ where: { id: currentUserId ?? undefined } });
+
+export const getOneUserByUsername = async ({ username }: { username: string }) =>
+  (await getUserFromRedis(username)) ||
+  prisma.user.findUnique({ where: { username } });
+
+export const getOneUserByEmail = async ({ email }: { email: string }) =>
+  prisma.user.findUnique({ where: { email } });

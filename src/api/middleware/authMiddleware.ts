@@ -1,7 +1,9 @@
 import { verifyToken } from '../../utils/jwt/jwtHelper';
+import { Response,Request,NextFunction } from 'express';
 import apiResponseHandler from '../../utils/apiResponseHandler';
+ 
 
-export const authMiddleware = (req: any, res: any, next: any) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
@@ -21,8 +23,9 @@ export const authMiddleware = (req: any, res: any, next: any) => {
       message: decodedToken ? 'Token expired' : 'Invalid token',
       tokenExpired: !!decodedToken,
     });
-  }
-
-  req.user = decodedToken;
+  }  
+  req.userId = decodedToken.userId;
+  
   next();
 };
+

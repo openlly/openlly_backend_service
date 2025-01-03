@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { appConfig } from "../appConfig";
 
-interface JwtPayload {
+export interface JwtPayload {
     userId: string;
     iat: number;
     exp: number;

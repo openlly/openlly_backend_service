@@ -44,6 +44,11 @@ model Response {
   updatedAt  DateTime @updatedAt
   answerTo   String
   seen       Boolean?
+  hint       String?
+  ackEmail  String?
+  ackSentAt DateTime?
+  sendIdentity String?
+  selectedTime DateTime?
 }
 
 model Username{

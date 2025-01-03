@@ -25,11 +25,11 @@ export const getUserFromRedis = async (idOrUsername: string) => {
       return JSON.parse(redisUserToken);
     }
 
-    return null; // If no token found
   } catch (error) {
     console.error('Error fetching user from Redis:', error);
-    throw new Error('Error fetching user from Redis');
   }
+  return null;
+
 };
 
 

@@ -41,14 +41,21 @@ export default async function createAnswer(req: Request, res: Response) {
             answerTo: schema.data.answerTo,
             createdAt: new Date(),
             updatedAt: new Date(),
+            hint: schema.data.hint,
+            ackEmail: schema.data.notifEmail,
+            sendIdentity: schema.data.userIdentity,
+            selectedTime: schema.data.revealTime,
         },        
     });
+    console.log("answer", answer);
+
     apiResponseHandler(res, {
         statusCode: 200,
         hasError: false,
         message: 'success',
-        data: answer,
+        data: null,
     }); 
+    
    
 
 }

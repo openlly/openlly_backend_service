@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { authMiddleware } from '../../../middleware/authMiddleware';
 import getOneUser from './controller/getOneUser';
 import multer from 'multer';
