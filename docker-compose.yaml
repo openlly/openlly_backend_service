@@ -22,9 +22,26 @@ services:
     image: redis
     networks:
       - app-network
-    # Add this to make Redis accessible from host machine if needed
+    # Expose Redis on port 6379 for host access if needed
     ports:
       - "6379:6379"
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: openlly
+      RABBITMQ_DEFAULT_PASS: openlly
+    ports:
+      - "15672:15672"   # Management UI
+      - "5672:5672"     # AMQP protocol
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
@@ -33,6 +50,7 @@ services:
     depends_on:
       - db
       - redis
+      - rabbitmq
     env_file:
       - .env
     command: npm run dev
