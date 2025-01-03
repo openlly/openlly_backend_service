@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
@@ -5,7 +6,7 @@ import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 import { questionUrl } from '../utils/questionUtils';
 
 export default async function getQuestionById(req: Request, res: Response) {
-    const userId = (req as any).user?.userId;
+    const userId = req.userId
     const id = req.params.id;
     if(!id){
         apiResponseHandler(res, {    

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import schema from '../validations/authValidations';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
-import { generateToken } from '../../../../../utils/jwt/jwtHelper';
+import { generateAccessToken, generateRefreshToken } from '../../../../../utils/jwt/jwtHelper'; // Import both token generators
 import { prisma } from '../../../../../prisma/prisma';
 import { verifyPassword } from '../../../../../utils/bcrypt/password';
 import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
@@ -37,8 +37,8 @@ export default async function loginController(
 
         const { email, password } = loginData.data;
         let token = null;
+        let refreshToken = null;
     
-
         // Look up the user in the database
         const dbUser = await prisma.user.findUnique({ where: { email } });
 
@@ -51,7 +51,7 @@ export default async function loginController(
         }
 
         // Validate password
-        const isPasswordValid = await verifyPassword(password, dbUser.password??"");
+        const isPasswordValid = await verifyPassword(password, dbUser.password ?? "");
         if (!isPasswordValid) {
             return apiResponseHandler(res, {
                 statusCode: 400,
@@ -60,15 +60,15 @@ export default async function loginController(
             });
         }
 
-        // Generate a new JWT token
-        token = generateToken(dbUser.id);
+        // Generate both Access Token and Refresh Token
+        token = generateAccessToken(dbUser.id);
+        refreshToken = generateRefreshToken(dbUser.id);  // Generate refresh token
 
         // Cache the user data and token in Redis for future use, with an expiration of 1 hour
-        await setUserInRedis(dbUser.id,  dbUser); // Helper to save user and token in Redis
+        await setUserInRedis(dbUser.id, dbUser); // Helper to save user and token in Redis
 
         // Remove sensitive data (e.g., password) from the user object
         const userWithoutPassword = userResponseHandler(dbUser);
-
 
         // Send the response
         return apiResponseHandler(res, {
@@ -76,7 +76,8 @@ export default async function loginController(
             hasError: false,
             message: 'Login successful',
             data: {
-                token, // The newly generated token
+                token,         // The newly generated Access Token
+                refreshToken,  // The newly generated Refresh Token
                 user: userWithoutPassword,
             },
         });

@@ -4,7 +4,7 @@ import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
 export default async function getOneUser(req: Request, res: Response) {
-    const currentUserId = (req as any).user?.userId || req.params.id;
+    const currentUserId = req.params.id || req.userId;
 
     if (!currentUserId) {
         return apiResponseHandler(res, {

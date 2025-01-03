@@ -1,4 +1,5 @@
-import express, {Response, Request} from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import  {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { questionUrl } from '../utils/questionUtils';
@@ -6,7 +7,7 @@ import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 
 export default async function getQuestions(req: Request, res: Response) {
-    const userId = (req as any).user?.userId;
+    const userId =req.userId
     
     const limit = 10;
     const page = parseInt(req.query.page as string, 10) || 1;

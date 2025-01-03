@@ -3,7 +3,7 @@ import apiResponseHandler from "../../../../../utils/apiResponseHandler";
 import { redis } from "../../../../../redis/redis";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../../../../../prisma/prisma";
-import { generateToken } from "../../../../../utils/jwt/jwtHelper";
+import { generateAccessToken, generateRefreshToken } from "../../../../../utils/jwt/jwtHelper";
 import { setUserInRedis } from "../../../../../redis/user/redisUserHelper";
 import schemas from "../validations/authValidations";
 import { userResponseHandler } from "../../../../../utils/user/userResponseHelper";
@@ -53,7 +53,11 @@ export async function verifiyMagicLink(req: Request, res: Response) {
       update: {},
     });
 
-    const jwtToken = generateToken(user.id);
+    // Generate both Access Token and Refresh Token
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
+    // Save user to Redis
     await setUserInRedis(user.id, user);
 
     apiResponseHandler(res, {
@@ -61,7 +65,8 @@ export async function verifiyMagicLink(req: Request, res: Response) {
       hasError: false,
       message: "success",
       data: {
-        token: jwtToken,
+        accessToken,       // Send Access Token
+        refreshToken,      // Send Refresh Token
         user: userResponseHandler(user),
       },
     });

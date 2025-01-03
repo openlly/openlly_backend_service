@@ -4,6 +4,7 @@ import signupController from './controller/signupController';
 import { generateMagicLink } from './controller/generateMagicLink';
 import { verifiyMagicLink } from './controller/verifyMagicLink';
 import rateLimit from 'express-rate-limit';
+import { refreshTokenController } from './controller/refreshTokenController';
 const generateMagicLinkLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
     max: 3, // Limit each IP to 3 requests per `windowMs`
@@ -20,6 +21,8 @@ auth.post("/signup", signupController);
 
 auth.post('/magic-link', generateMagicLinkLimiter, generateMagicLink);
 auth.post('/magic-link/verify',verifiyMagicLink);
+auth.post('/refresh-token', refreshTokenController);
+
 
 
 export default auth;

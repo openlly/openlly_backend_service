@@ -27,6 +27,7 @@ export const appConfig = {
     rmqUser : String(process.env.RABBITMQ_USERNAME),
     rmqPass : String(process.env.RABBITMQ_PASSWORD),
     rmqhost : String(process.env.RABBITMQ_URL),
+    JWT_REFRESH_EXPIRES_MS: Number(process.env.JWT_REFRESH_EXPIRES_MS) || 86400000
 
 }
 

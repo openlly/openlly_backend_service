@@ -6,7 +6,6 @@ import {updateUserSchema} from '../schema/schema';
 import { prisma } from '../../../../../prisma/prisma';
 import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 import { updateUserInRedis } from '../../../../../redis/user/redisUserHelper';
-import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 
 export default async function updateUsername(req: Request, res: Response) {
@@ -21,7 +20,7 @@ export default async function updateUsername(req: Request, res: Response) {
     }
     
     const user = await prisma.user.update({
-        where: { id: (req as any).user?.userId },
+        where: { id: req.userId },
         data: schema.data,
     });
     //update user in redis

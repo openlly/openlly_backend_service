@@ -25,7 +25,7 @@ export default async function uploadProfileAvatar(req: Request, res: Response) {
         });
         return;
     }   
-    const currentUserId = (req as any).user?.userId;
+    const currentUserId = req.userId
     if(!currentUserId){
         apiResponseHandler(res, {
             statusCode: 401,

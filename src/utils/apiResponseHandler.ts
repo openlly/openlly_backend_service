@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import {  Response } from 'express';
 
 interface APIResponse {
   status: number;
@@ -28,9 +28,8 @@ const defaultMessages: Record<number, string> = {
 
 const removeEmptyValues = (obj: any) => {
   // Remove null, undefined, and empty string values
-  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== null && v !== undefined && v !== ''));
-};
-
+  return Object.fromEntries(Object.entries(obj).filter(([ , v]) => v !== null && v !== undefined && v !== ''));
+}
 export default function apiResponseHandler(
   res: Response,
   {
@@ -73,9 +72,6 @@ export default function apiResponseHandler(
 
   // Remove empty values (null, undefined, empty string) from the response
   const cleanedResponse = removeEmptyValues(apiResponse);
-  // Log response
-  console.log('API Response:', cleanedResponse);
-
   // Send the API response
   return res.status(apiResponse.status).json(cleanedResponse);
 }

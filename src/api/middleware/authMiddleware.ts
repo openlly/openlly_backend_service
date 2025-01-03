@@ -1,6 +1,7 @@
-import { verifyToken } from '../../utils/jwt/jwtHelper';
+import { verifyAccessToken } from '../../utils/jwt/jwtHelper';
 import { Response,Request,NextFunction } from 'express';
 import apiResponseHandler from '../../utils/apiResponseHandler';
+import { TokenExpiredError } from 'jsonwebtoken';
  
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -14,18 +15,33 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     });
   }
 
-  const decodedToken = verifyToken(token);
-
-  if (!decodedToken || decodedToken.exp < Date.now() / 1000) {
+  try{
+    const decodedToken = verifyAccessToken(token);
+    if(!decodedToken){
+      return apiResponseHandler(res, {
+        statusCode: 401,
+        hasError: true,
+        message: 'Invalid token',
+      })
+    }
+    console.log(decodedToken);
+    req.userId = decodedToken.userId;
+    next();
+  }catch(error){
+    if(error instanceof TokenExpiredError){
+      return apiResponseHandler(res, {
+        statusCode: 401,
+        hasError: true,
+        message: error.message,
+        tokenExpired: true  
+      })
+    }
     return apiResponseHandler(res, {
       statusCode: 401,
       hasError: true,
-      message: decodedToken ? 'Token expired' : 'Invalid token',
-      tokenExpired: !!decodedToken,
-    });
-  }  
-  req.userId = decodedToken.userId;
-  
-  next();
+      message: 'Invalid token',
+    })
+  }
+ 
 };
 

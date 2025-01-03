@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import schema from '../validations/authValidations';
 import { v4 as uuidv4 } from 'uuid';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler'; 
-import { generateToken } from '../../../../../utils/jwt/jwtHelper';
+import { generateAccessToken, generateRefreshToken } from '../../../../../utils/jwt/jwtHelper'; // Import both token generators
 import { prisma } from '../../../../../prisma/prisma';
 import { createPassword } from '../../../../../utils/bcrypt/password';
 import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token in Redis
@@ -48,8 +48,9 @@ export default async function signupController(
             data: { id: uuidv4(), email, password: hashedPassword }
         });
 
-        // Generate a JWT token
-        const token = generateToken(user.id);
+        // Generate both Access Token and Refresh Token
+        const token = generateAccessToken(user.id);
+        const refreshToken = generateRefreshToken(user.id); // Generate refresh token
 
         // Cache the user and token in Redis
         await setUserInRedis(user.id, user); // Helper to save user and token in Redis
@@ -60,7 +61,8 @@ export default async function signupController(
             hasError: false,
             message: 'Account created successfully',
             data: {
-                token, 
+                token,         // The newly generated Access Token
+                refreshToken,  // The newly generated Refresh Token
                 user: { ...user, password: undefined } // Remove password from the user object
             }
         });

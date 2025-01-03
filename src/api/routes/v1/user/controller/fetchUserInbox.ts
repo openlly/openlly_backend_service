@@ -5,7 +5,7 @@ import { questionUrl } from '../../questions/utils/questionUtils';
 import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 export const fetchUserInbox = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.userId;
+    const userId = req.userId
     if(!userId){
         apiResponseHandler(res, {
             statusCode: 401,
