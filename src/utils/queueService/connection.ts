@@ -1,8 +1,8 @@
 import client, { Connection, Channel } from "amqplib";
 import { appConfig } from "../appConfig";
 import { handleIncomingNotification } from "./handler";
-const { rmqUser, rmqPass, rmqhost } = appConfig;    
-if(!rmqUser || !rmqPass || !rmqhost){
+const { RMQ_URL } = appConfig;    
+if(!RMQ_URL){
     console.error("RabbitMQ config not found. Exiting...");
     process.exit(1);
 }
@@ -19,7 +19,7 @@ class RabbitMQConnection {
     try {
       console.log(`⌛️ Connecting to Rabbit-MQ Server`);
       this.connection = await client.connect(
-        `amqp://${rmqUser}:${rmqPass}@${rmqhost}:5672`
+        RMQ_URL
       );
 
       console.log(`✅ Rabbit MQ Connection is ready`);

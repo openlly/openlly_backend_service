@@ -24,9 +24,7 @@ export const appConfig = {
     SMTP_FROM: process.env.SMTP_FROM,
     MAGIC_LINK_TTL : Number(process.env.MAGIC_LINK_TTL),
     ADMIN_EMAIL : process.env.ADMIN_EMAIL,
-    rmqUser : String(process.env.RABBITMQ_USERNAME),
-    rmqPass : String(process.env.RABBITMQ_PASSWORD),
-    rmqhost : String(process.env.RABBITMQ_URL),
+    RMQ_URL : String(process.env.RABBITMQ_URL),
     JWT_REFRESH_EXPIRES_MS: Number(process.env.JWT_REFRESH_EXPIRES_MS) || 86400000
 
 }
