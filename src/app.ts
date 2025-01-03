@@ -39,16 +39,14 @@ app.use(limiter);
 // Routes
 app.use('/api/v1', v1);
 
-
-
-// Global error handler middleware
-app.use((err: any, _: Request, res: Response, next: NextFunction) => {
+app.use((_, res) => {
   apiResponseHandler(res, {
-    statusCode: err.statusCode || 500,
+    statusCode: 404,
     hasError: true,
-    message: err.message,
+    message: 'Route not found',
   });
 });
+
 
 // Start the server
 app.listen(PORT, () => {
