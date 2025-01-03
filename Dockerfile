@@ -25,10 +25,10 @@ COPY --from=build /app/package*.json ./
 RUN npm install --production
 
 # Copy the built app files from the build stage
-COPY --from=build /app/build /app/build
+COPY --from=build /app/dist /app/dist
 
 # Expose the port that your app will run on
 EXPOSE 3001
 
 # Command to start the app in production mode
-CMD ["node", "build/app.js"]
+CMD ["node", "dist/app.js"]
