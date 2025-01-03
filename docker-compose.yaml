@@ -22,7 +22,6 @@ services:
     image: redis
     networks:
       - app-network
-    # Expose Redis on port 6379 for host access if needed
     ports:
       - "6379:6379"
 
@@ -53,7 +52,7 @@ services:
       - rabbitmq
     env_file:
       - .env
-    command: npm run dev
+    command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "npm", "run", "dev"]
     networks:
       - app-network
 
