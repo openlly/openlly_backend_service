@@ -22,6 +22,9 @@ let transporter = nodeMailer.createTransport({
 
 export async function sendEmail(to: string, subject: string, html: string): Promise<Boolean> {
     try {
+        if(isDevEnv){
+            return true;
+        }
         const info = await transporter.sendMail({
             from: appConfig.SMTP_FROM,
             to,

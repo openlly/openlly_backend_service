@@ -58,7 +58,7 @@ class RabbitMQConnection {
     );
   }
 
-  async sendToQueue(queue: string, message: object) {
+  async sendToQueue(queue: string, message: any) {
     try {
       if (!this.channel) {
         await this.connect();
