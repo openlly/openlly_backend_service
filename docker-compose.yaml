@@ -47,6 +47,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
+      - RABBITMQ_URL=amqp://openlly:openlly@rabbitmq:5672  # Use Docker service name
     ports:
       - "3001:3001"
     depends_on:
