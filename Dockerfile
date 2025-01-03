@@ -10,10 +10,6 @@ WORKDIR /usr/app
 # Copy application files to the container
 COPY . .
 COPY prisma ./prisma
-COPY wait-for-it.sh /usr/app/wait-for-it.sh
-
-# Ensure wait-for-it.sh is executable
-RUN chmod +x /usr/app/wait-for-it.sh
 
 # Install dependencies and build the app
 RUN npm ci
