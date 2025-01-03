@@ -1,84 +1,76 @@
-import { Response, Request}  from "express";
+import { Response, Request } from "express";
 import apiResponseHandler from "../../../../../utils/apiResponseHandler";
 import { redis } from "../../../../../redis/redis";
-import  crypto, { getRandomValues } from 'crypto';
-import schemas from '../validations/authValidations';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../../../../../prisma/prisma";
 import { generateToken } from "../../../../../utils/jwt/jwtHelper";
 import { setUserInRedis } from "../../../../../redis/user/redisUserHelper";
+import schemas from "../validations/authValidations";
 import { userResponseHandler } from "../../../../../utils/user/userResponseHelper";
 
-export async function verifiyMagicLink(req: Request, res: Response){
-   try{
-    const schema = await schemas.verfiyMagicLinkSchema.safeParseAsync(req.body);  
-    if(!schema.success){
-        apiResponseHandler(res, {
-            statusCode: 400,
-            hasError: true,
-            message: 'Invalid request body',
-        });
-        return;
+export async function verifiyMagicLink(req: Request, res: Response) {
+  try {
+    // Validate the request body with the schema   
+    const parsedResult = await schemas.verfiyMagicLinkSchema.safeParseAsync(req.body);
+    if (!parsedResult.success) {
+      return apiResponseHandler(res, {
+        statusCode: 400,
+        hasError: true,
+        message: parsedResult.error.issues.map((issue, index) => {
+          if (index === parsedResult.error.issues.length - 1) {
+            return `and ${issue.message}`;
+          }
+          return issue.message;
+        }).join(' ')
+      });
     }
-    const email = schema.data.email;
-    const token = schema.data.token;
+    const { email, token } = parsedResult.data;
     const storedToken = await redis.get(`${email}:magicToken`);
-    if(!storedToken || storedToken !== token){
-        apiResponseHandler(res, {
-            statusCode: 400,
-            hasError: true,
-            message: 'Invalid token',
-        });
-        return;
+    if (!storedToken || storedToken !== token) {
+      return apiResponseHandler(res, {
+        statusCode: 400,
+        hasError: true,
+        message: "Invalid token",
+      });
     }
-    //check if token is expired
-    const tokenExpiry = await redis.ttl(`${email}:magicToken`);
-    if(tokenExpiry < 0){
-        apiResponseHandler(res, {
-            statusCode: 400,
-            hasError: true,
-            message: 'Email verification link has been expired.',
-        });
-        return;
+
+    const ttl = await redis.ttl(`${email}:magicToken`);
+    if (ttl < 0) {
+      return apiResponseHandler(res, {
+        statusCode: 400,
+        hasError: true,
+        message: "Email verification link has been expired.",
+      });
     }
+
     await redis.del(`${email}:magicToken`);
-    var user = await prisma.user.findUnique({where: {email: email}}); 
-    if(!user){
-        //create user in database
-        const newUser = await prisma.user.create({
-            data: {
-                id: uuidv4(),
-                email: email,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                password: crypto.randomBytes(32).toString('hex'),
-            }
-        });
-            user = newUser; 
-        
-    }
-     // Generate a JWT token
-     const jwtToken = generateToken(user.id);
-
-     // Cache the user and token in Redis
-     await setUserInRedis(user.id, user); // Helper to save user and token in Redis
-
-     apiResponseHandler(res, {
-        statusCode: 200,
-        hasError: false,
-        message: 'User created successfully',
-        data: {
-            token: jwtToken,
-            user: userResponseHandler(user),
-        },
+    const user = await prisma.user.upsert({
+      where: { email },
+      create: {
+        id: uuidv4(),
+        email
+      },
+      update: {},
     });
 
-   }catch(error){  
+    const jwtToken = generateToken(user.id);
+    await setUserInRedis(user.id, user);
+
+    apiResponseHandler(res, {
+      statusCode: 200,
+      hasError: false,
+      message: "success",
+      data: {
+        token: jwtToken,
+        user: userResponseHandler(user),
+      },
+    });
+  } catch (error) {
     console.error(error);
     apiResponseHandler(res, {
-        statusCode: 500,
-        hasError: true,
-        message: 'Internal server error',
-    })
-   }
+      statusCode: 500,
+      hasError: true,
+      message: "Internal server error",
+    });
+  }
 }

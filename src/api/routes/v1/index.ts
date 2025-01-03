@@ -4,6 +4,7 @@ import user from './user';
 import questionRouter from './questions';
 import answers from './answer';
 import username from './username';
+import contactRouter from './contact';
 
 
 
@@ -19,6 +20,6 @@ v1.use('/user', user);
 v1.use('/question',questionRouter);
 v1.use('/answer', answers);
 v1.use('/username', username);
-
+v1.use('/contact',contactRouter);
 export default v1;  
 

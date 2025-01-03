@@ -37,8 +37,7 @@ export default async function loginController(
 
         const { email, password } = loginData.data;
         let token = null;
-        let user = null;
-
+    
 
         // Look up the user in the database
         const dbUser = await prisma.user.findUnique({ where: { email } });
@@ -52,7 +51,7 @@ export default async function loginController(
         }
 
         // Validate password
-        const isPasswordValid = await verifyPassword(password, dbUser.password);
+        const isPasswordValid = await verifyPassword(password, dbUser.password??"");
         if (!isPasswordValid) {
             return apiResponseHandler(res, {
                 statusCode: 400,

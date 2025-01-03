@@ -3,7 +3,7 @@ import apiResponseHandler from "../../../../../utils/apiResponseHandler";
 import { redis } from "../../../../../redis/redis";
 import  crypto from 'crypto';
 import schemas from '../validations/authValidations';
-import { appConfig } from "../../../../../utils/appConfig";
+import { appConfig, isDevEnv } from "../../../../../utils/appConfig";
 import { emailVerifcationTemplate } from "../../../../../templates/email-verification";
 import { sendEmail } from "../../../../../utils/emailer/node-emailer";
 
@@ -43,7 +43,7 @@ export async function generateMagicLink(req: Request, res: Response) {
                 statusCode: 200,
                 hasError: false,
                 message: 'Magic link has been sent to your email',
-                data: verificationLink,
+                data: isDevEnv?verificationLink:null,
             });
     } catch (error) {
         console.error(error);

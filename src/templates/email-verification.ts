@@ -2,7 +2,8 @@ import { appConfig } from "../utils/appConfig";
 
 export const emailVerifcationTemplate = (verificationLink: string, userRegistered: boolean) => {
    const expirationTimeInMinutes = Math.round(appConfig.MAGIC_LINK_TTL / 60000);
-   const formattedExpirationTime = new Date(Date.now() + appConfig.MAGIC_LINK_TTL).toLocaleString(`en-US`, { minute: `numeric`, hour: `numeric`, timeZoneName: `short` }) + ` (${expirationTimeInMinutes} min)`;
+   const formattedExpirationTime = new Date(Date.now() + appConfig.MAGIC_LINK_TTL).toLocaleString(`en-IN`, { minute: `numeric`, hour: `numeric`, timeZoneName: `short`, timeZone: `Asia/Kolkata` }) + ` (${expirationTimeInMinutes} min)`;
+   const getCurrentYear = new Date().getFullYear();
 
     return `
   <!DOCTYPE html>
@@ -86,7 +87,7 @@ export const emailVerifcationTemplate = (verificationLink: string, userRegistere
           <div class="footer">
               <p>If you're having trouble clicking the button, copy and paste this URL into your browser:</p>
               <p><a href="${verificationLink}">${verificationLink}</a></p>
-              <p>&copy; Openlly@2024. All rights reserved.</p>
+              <p>&copy; Openlly@${getCurrentYear}. All rights reserved.</p>
           </div>
       </div>
   </body>
