@@ -6,7 +6,7 @@ import { generateAccessToken, generateRefreshToken } from '../../../../../utils/
 import { prisma } from '../../../../../prisma/prisma';
 import { createPassword } from '../../../../../utils/bcrypt/password';
 import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token in Redis
-import { userResponseHandler } from 'utils/user/userResponseHelper';
+import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
 
 export default async function signupController(
   req: Request,
