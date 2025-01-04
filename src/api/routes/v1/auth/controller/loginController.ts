@@ -76,10 +76,10 @@ export default async function loginController(
             hasError: false,
             message: 'Login successful',
             data: {
-                token,         // The newly generated Access Token
+                accessToken:token,       // The newly generated Access Token
                 refreshToken,  // The newly generated Refresh Token
-                user: userWithoutPassword,
-            },
+                user:  userWithoutPassword,// Remove password from the user object
+            }
         });
 
     } catch (error) {

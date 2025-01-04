@@ -31,7 +31,7 @@ export async function refreshTokenController(req: Request, res: Response) {
         hasError: false,
         message: 'Success',
         data: {
-            token: newAccessToken,
+            accessToken: newAccessToken,
             refreshToken: newRefreshToken,
         }
     });

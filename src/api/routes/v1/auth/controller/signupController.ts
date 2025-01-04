@@ -6,6 +6,7 @@ import { generateAccessToken, generateRefreshToken } from '../../../../../utils/
 import { prisma } from '../../../../../prisma/prisma';
 import { createPassword } from '../../../../../utils/bcrypt/password';
 import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token in Redis
+import { userResponseHandler } from 'utils/user/userResponseHelper';
 
 export default async function signupController(
   req: Request,
@@ -61,9 +62,9 @@ export default async function signupController(
             hasError: false,
             message: 'Account created successfully',
             data: {
-                token,         // The newly generated Access Token
+                accessToken:token,       // The newly generated Access Token
                 refreshToken,  // The newly generated Refresh Token
-                user: { ...user, password: undefined } // Remove password from the user object
+                user:  userResponseHandler(user),// Remove password from the user object
             }
         });
     } catch (error) {
