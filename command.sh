@@ -11,11 +11,11 @@ read -p "Enter an option: " option
 case $option in
     1)
         # Run without building
-        docker-compose up --env-file .env
+        docker-compose --env-file up  .env
         ;;
     2)
         # Run with build, using the cache
-        docker-compose up --env-file .env --build --no-cache -d
+        docker-compose --env-file .env  up --build --no-cache -d
         ;;
     3)
         # Show the last 100 logs
