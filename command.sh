@@ -2,7 +2,7 @@
 
 echo "Select an option:"
 echo "1. docker-compose up (without build)"
-echo "2. docker-compose up --build -d (with build using cache)"
+echo "2. docker-compose up  --build -d (with build using cache)"
 echo "3. docker failures logs"
 echo "4. db migration"
 
@@ -11,11 +11,11 @@ read -p "Enter an option: " option
 case $option in
     1)
         # Run without building
-        docker-compose up
+        docker-compose up --env-file .env
         ;;
     2)
         # Run with build, using the cache
-        docker-compose up --build --no-cache -d
+        docker-compose up --env-file .env --build --no-cache -d
         ;;
     3)
         # Show the last 100 logs

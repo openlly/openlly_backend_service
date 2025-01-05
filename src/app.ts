@@ -13,7 +13,7 @@ const app = express();
 
 // Determine environment
 const isProd = appConfig.NODE_ENV === 'production';
-const PORT = appConfig.PORT || (isProd ? 80 : 3000);
+const PORT = appConfig.APP_PORT || (isProd ? 80 : 3000);
 
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
@@ -52,7 +52,7 @@ app.use((_, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT} in ${isProd ? 'production' : 'development'} mode.`);
+  console.log(`Server is running on port  ${PORT} in ${isProd ? 'production' : 'development'} mode.`);
 });
 
 export default app;
