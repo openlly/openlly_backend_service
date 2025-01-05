@@ -69,17 +69,14 @@ export const messageAcknowledgmentTemplate = (
                 <h1>Message Acknowledgment</h1>
             </div>
             <div class="content">
-                <p>Hello ${userName}!</p>
+                <p>Hello!</p>
     
-                <p>We have successfully received and acknowledged your message. Here's a quick summary of your message:</p>
+                <p>${userName} has received and acknowledged your message succesfully.</p>
                 <p><strong>Your Response:</strong></p>
                 <p>${messageDetails}</p>
-    
-                            
                 <center>
                     <a href="${messageUrl}" class="button">View Your Message</a> <!-- Include the message URL -->
                 </center>
-    
                 <p>If you have any further questions, feel free to reply to this email.</p>
             </div>
             <div class="footer">
