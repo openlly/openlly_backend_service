@@ -36,27 +36,28 @@ export default async function questionSuggestion(req: Request, res: Response) {
         return;
     }
     try{
-        const response=await groq.chat.completions.create({
+        const response = await groq.chat.completions.create({
             messages: [
-               {
-                   role: "system",
-                   content:`
-                   You are a helpful assistant that specializes to answer question related to ${questionDetail.title} 🤔 and qustion content ${questionDetail.content}.
-                   Provide a short answer to the question and which grab other user attention. The answer length should be between 40-60 characters. Don't forget to add a bit of humor to it 😄(not always depend upon question seriouness).
-                   The JSON response must strictly adhere to the following schema:
-                   ${JSON.stringify(schema, null, 2)}
-                   `
-                 },
-                   // Set a user message for the assistant to respond to.
-               {
-                   role: "user",
-                   content: 'Give me answer for question',
-               },
-               ],
-               model: "llama3-8b-8192",
-               response_format: { type: "json_object" },
-               stream: false,
-           });
+              {
+                role: "system",
+                content: `
+                You are a helpful assistant that specializes in asking engaging and thought-provoking questions related to ${questionDetail.title} 🤔 and the content of the question: ${questionDetail.content}. 
+                Your goal is to craft questions that not only grab attention but also encourage the user to reflect on their life, romantic relationships, college or school experiences, and memorable moments or special days. 
+                The question length should be between 40-60 characters. Occasionally, add humor to make the question feel light-hearted 😄 (but adjust based on the question's seriousness).
+                The JSON response must strictly adhere to the following schema:
+                ${JSON.stringify(schema, null, 2)}
+                `
+              },
+              {
+                role: "user",
+                content: 'Give me an answer for the question.',
+              },
+            ],
+            model: "llama3-8b-8192",
+            response_format: { type: "json_object" },
+            stream: false,
+          });
+          
            const parsedResponse = JSON.parse(response.choices[0].message.content??"{}");
            const answer = parsedResponse.answer;
            apiResponseHandler(res, {

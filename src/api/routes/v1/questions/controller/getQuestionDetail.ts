@@ -34,6 +34,8 @@ export default async function getQuestionDetail(req: Request, res: Response) {
     }
     //get question detail using question Title 
     const questionDetail = await prisma.question.findUnique({where: {questionAbrbreviation: schema.data.q }});
+    
+
     if(!questionDetail){
         apiResponseHandler(res, {
             statusCode: 404,
@@ -42,15 +44,18 @@ export default async function getQuestionDetail(req: Request, res: Response) {
         });
         return;
     }
+    const {deleteAt, createdAt, updatedAt, ...questionDetailWithoutTime} = questionDetail;
     apiResponseHandler(res, {
         statusCode: 200,
         hasError: false,
         message: 'success',
         data: {
-            ...questionDetail,
+            ...questionDetailWithoutTime,
             user: {
                 ...userResponseHandler(user),
-                email: undefined     
+                email: undefined,
+                createdAt: undefined,
+                updatedAt: undefined,   
             }
         
         },

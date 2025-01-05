@@ -14,7 +14,35 @@ export default async function createAnswer(req: Request, res: Response) {
         });
         return;
     }   
+    let formatedRevealTime = null;
+    if(schema.data.revealTime){
+       try{
+        const selectedTime = new Date(schema.data.revealTime);
+        formatedRevealTime = selectedTime;
+        const currentTime = new Date();
+        const timeDifference = (selectedTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60); // difference in hours
     
+        if (isNaN(selectedTime.getTime()) || timeDifference < 2 || timeDifference > 48) {
+            apiResponseHandler(res, {
+                statusCode: 400,
+                hasError: true,
+                message: 'Invalid reveal time. It must be between 2 and 48 hours from now.',
+            });
+            return;
+        }
+       }catch(e){
+        apiResponseHandler(res, {
+            statusCode: 400,
+            hasError: true,
+            message: 'Invalid reveal time. It must be between 2 and 48 hours from now.',
+        });
+        return;
+       }
+    }
+   
+     
+    
+
     const question = await prisma.question.findUnique({where: {id: schema.data.questionId}});
     if(!question){
         apiResponseHandler(res, {
@@ -24,6 +52,7 @@ export default async function createAnswer(req: Request, res: Response) {
         });
         return;
     }
+    
     const user = await prisma.user.findUnique({where: {id: schema.data.answerTo}});
     if(!user){
         apiResponseHandler(res, {
@@ -33,6 +62,7 @@ export default async function createAnswer(req: Request, res: Response) {
         });
         return;
     }
+
     const answer = await prisma.response.create({
         data: {
             id: uuidv4(),
@@ -44,7 +74,7 @@ export default async function createAnswer(req: Request, res: Response) {
             hint: schema.data.hint,
             ackEmail: schema.data.notifEmail,
             sendIdentity: schema.data.userIdentity,
-            selectedTime: schema.data.revealTime,
+            selectedTime: formatedRevealTime,
         },        
     });
     console.log("answer", answer);
