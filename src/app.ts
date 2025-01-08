@@ -33,7 +33,12 @@ mqConnection.connect();
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 100, // 100 requests per 5 minutes
-  message: 'Too many requests. Please try again later.',
+  message: {
+    statusCode: 429,
+    hasError: true,
+    message: 'Too many requests, please try again later.',
+    errorCode: 'TOO_MANY_REQUESTS',
+  },
 });
 app.use(limiter);
 
