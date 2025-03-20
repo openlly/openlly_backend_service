@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import apiResponseHandler from '../../../../../utils/apiResponseHandler';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../../../../../utils/jwt/jwtHelper';
+import apiResponseHandler from '../../../../../../utils/apiResponseHandler';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../../../../../../utils/jwt/jwtHelper';
 
 export async function refreshTokenController(req: Request, res: Response) {
     const { refreshToken } = req.body;

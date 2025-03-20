@@ -1,21 +1,20 @@
-version: "3.9"
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        NODE_ENV: ${NODE_ENV}  # Pass NODE_ENV to Dockerfile
+        NODE_ENV: ${NODE_ENV} # Pass NODE_ENV to Dockerfile
     volumes:
       - /app/node_modules
     environment:
-      NODE_ENV: ${NODE_ENV}  # Pass NODE_ENV to container
+      NODE_ENV: ${NODE_ENV} # Pass NODE_ENV to container
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       RABBITMQ_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq:5672
     ports:
-      - "${APP_PORT}:${APP_PORT}"  # Dynamically map the port based on APP_PORT environment variable
+      - "${APP_PORT}:${APP_PORT}" # Dynamically map the port based on APP_PORT environment variable
     depends_on:
       db:
         condition: service_healthy
@@ -42,7 +41,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,7 +54,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -72,7 +71,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -81,16 +80,16 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}  # Set default email for login
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}  # Set default password for login
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL} # Set default email for login
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Set default password for login
     ports:
-      - "5050:80"  # Map pgAdmin's web UI to port 5050
+      - "5050:80" # Map pgAdmin's web UI to port 5050
     depends_on:
       - db
     networks:
       - app-network
     volumes:
-      - pgadmin_data:/var/lib/pgadmin  # Persistent data for pgAdmin
+      - pgadmin_data:/var/lib/pgadmin # Persistent data for pgAdmin
 
 volumes:
   postgres:

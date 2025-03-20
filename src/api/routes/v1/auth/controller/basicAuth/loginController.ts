@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import schema from '../validations/authValidations';
-import apiResponseHandler from '../../../../../utils/apiResponseHandler';
-import { generateAccessToken, generateRefreshToken } from '../../../../../utils/jwt/jwtHelper'; // Import both token generators
-import { prisma } from '../../../../../prisma/prisma';
-import { verifyPassword } from '../../../../../utils/bcrypt/password';
-import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
-import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token
+import schema from '../../validations/authValidations';
+import apiResponseHandler from '../../../../../../utils/apiResponseHandler';
+import { generateAccessToken, generateRefreshToken } from '../../../../../../utils/jwt/jwtHelper'; // Import both token generators
+import { prisma } from '../../../../../../prisma/prisma';
+import { verifyPassword } from '../../../../../../utils/bcrypt/password';
+import { userResponseHandler } from '../../../../../../utils/user/userResponseHelper';
+import { setUserInRedis } from '../../../../../../redis/user/redisUserHelper'; // Helper function to save user and token
 
 export default async function loginController(
   req: Request,

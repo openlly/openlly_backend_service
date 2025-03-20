@@ -1,12 +1,12 @@
 import { Response, Request}  from "express";
-import apiResponseHandler from "../../../../../utils/apiResponseHandler";
-import { redis } from "../../../../../redis/redis";
+import apiResponseHandler from "../../../../../../utils/apiResponseHandler";
+import { redis } from "../../../../../../redis/redis";
 import  crypto from 'crypto';
-import schemas from '../validations/authValidations';
-import { appConfig, isDevEnv } from "../../../../../utils/appConfig";
-import { emailVerifcationTemplate } from "../../../../../templates/email-verification";
-import { addToEmailQueue } from "../../../../../utils/queueService/notification";
-import { getOneUserByEmail } from "../../../../../utils/user/getOneUser";
+import schemas from '../../validations/authValidations';
+import { appConfig, isDevEnv } from "../../../../../../utils/appConfig";
+import { emailVerifcationTemplate } from "../../../../../../templates/email-verification";
+import { addToEmailQueue } from "../../../../../../utils/queueService/notification";
+import { getOneUserByEmail } from "../../../../../../utils/user/getOneUser";
 
 
 

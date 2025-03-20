@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();    
+dotenv.config();
 
 
 export const appConfig = {
@@ -9,12 +9,11 @@ export const appConfig = {
     DATABASE_URL: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
     NODE_ENV: process.env.NODE_ENV || 'development',
     APP_PORT: process.env.APP_PORT || 3000,
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_URL: process.env.CLOUDINARY_URL,
-    APP_CLIENT_URL : process.env.APP_CLIENT_URL,
+    APP_CLIENT_URL: process.env.APP_CLIENT_URL,
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PORT: process.env.REDIS_PORT,
     SMTP_HOST: process.env.SMTP_HOST,
@@ -22,11 +21,13 @@ export const appConfig = {
     SMTP_USER: process.env.SMTP_USER,
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
-    MAGIC_LINK_TTL : Number(process.env.MAGIC_LINK_TTL),
-    ADMIN_EMAIL : process.env.ADMIN_EMAIL,
-    RMQ_URL : String(process.env.RABBITMQ_URL),
-    JWT_REFRESH_EXPIRES_MS: Number(process.env.JWT_REFRESH_EXPIRES_MS) || 86400000
-
+    MAGIC_LINK_TTL: Number(process.env.MAGIC_LINK_TTL),
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    RMQ_URL: String(process.env.RABBITMQ_URL),
+    JWT_REFRESH_EXPIRES_MS: Number(process.env.JWT_REFRESH_EXPIRES_MS) || 86400000,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+    OPENAI_API_BASE_URL: process.env.OPENAI_API_BASE_URL || 'https://api.groq.com/openai/v1',
+    OPENAI_MODEL: process.env.OPENAI_MODEL || 'llama3-8b-8192',
 }
 
 enum Environment {

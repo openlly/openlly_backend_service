@@ -1,12 +1,12 @@
 import { Response, Request } from "express";
-import apiResponseHandler from "../../../../../utils/apiResponseHandler";
-import { redis } from "../../../../../redis/redis";
+import apiResponseHandler from "../../../../../../utils/apiResponseHandler";
+import { redis } from "../../../../../../redis/redis";
 import { v4 as uuidv4 } from "uuid";
-import { prisma } from "../../../../../prisma/prisma";
-import { generateAccessToken, generateRefreshToken } from "../../../../../utils/jwt/jwtHelper";
-import { setUserInRedis } from "../../../../../redis/user/redisUserHelper";
-import schemas from "../validations/authValidations";
-import { userResponseHandler } from "../../../../../utils/user/userResponseHelper";
+import { prisma } from "../../../../../../prisma/prisma";
+import { generateAccessToken, generateRefreshToken } from "../../../../../../utils/jwt/jwtHelper";
+import { setUserInRedis } from "../../../../../../redis/user/redisUserHelper";
+import schemas from "../../validations/authValidations";
+import { userResponseHandler } from "../../../../../../utils/user/userResponseHelper";
 
 export async function verifiyMagicLink(req: Request, res: Response) {
   try {
@@ -59,7 +59,6 @@ export async function verifiyMagicLink(req: Request, res: Response) {
 
     // Save user to Redis
     await setUserInRedis(user.id, user);
-
     apiResponseHandler(res, {
       statusCode: 200,
       hasError: false,

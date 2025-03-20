@@ -3,8 +3,6 @@ import {Response, Request} from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { validateUsernameSchema } from '../schema/schema';
- 
-
 
 export default async function validateUsername(req: Request, res: Response) {
    //zod validate query parameter
@@ -17,16 +15,23 @@ export default async function validateUsername(req: Request, res: Response) {
         });
         return;
    }
-   const username = schema.data.username;
+   const username = schema.data.username.toLowerCase();
 
-   //check if username exists in database
-   const user = await prisma.user.findUnique({ where: { username } });
+   //check if username exists in database (case insensitive)
+   const user = await prisma.user.findFirst({
+       where: {
+           username: {
+               equals: username,
+               mode: 'insensitive'
+           }
+       }
+   });
    if (user) {
         apiResponseHandler(res, {
             statusCode: 400,
             hasError: true,
             message: 'Username already exists',
-            data:true
+            data: true
         });
         return;
     } else {
@@ -36,5 +41,5 @@ export default async function validateUsername(req: Request, res: Response) {
             message: 'Username is available',
             data: false,
         });
-    }   
+    } 
 }
