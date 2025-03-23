@@ -7,9 +7,9 @@ import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
 
 
 export default async function getQuestions(req: Request, res: Response) {
+   try{
     const userId =req.userId
-    
-    const limit = 10;
+    const limit = parseInt(req.query.limit as string, 10) || 10;
     const page = parseInt(req.query.page as string, 10) || 1;
     const skip = (page - 1) * limit;
     const questions = await prisma.question.findMany({
@@ -20,6 +20,21 @@ export default async function getQuestions(req: Request, res: Response) {
         }
     });
     const currentUser=await getOneUserUtilById({currentUserId: userId}); 
+    if(!currentUser){
+        return apiResponseHandler(res,{
+            hasError:true,
+            statusCode:404,
+            message:'User not found',
+        });
+    }
+    //check if username is present
+    if(!currentUser.username){
+        return apiResponseHandler(res,{
+            hasError:true,
+            statusCode:404,
+            message:'Username not found',
+        });
+    }
     const questionParsed = questions.map((question) => {
         const { deleteAt, ...questionWithoutDeleteAt } = question;
         return {
@@ -37,4 +52,11 @@ export default async function getQuestions(req: Request, res: Response) {
         message:'success',
         data: questionParsed,
     });
+   }catch(error){
+    apiResponseHandler(res,{
+        hasError:true,
+        statusCode:500,
+        message:'Internal server error',
+    });
+   }
 }

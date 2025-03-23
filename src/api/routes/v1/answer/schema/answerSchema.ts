@@ -4,9 +4,7 @@ export const createAnswerSchema = z.object({
     content: z.string().min(1, { message: "Content is required" }),
     questionId: z.string().min(1, { message: "Question ID is required" }),
     answerTo: z.string().min(1, { message: "Answer to is required" }),
-    hint: z.string().optional().nullable().refine((v) => v === null || v === undefined || v.length > 0, {
-        message: "Hint must be at least 1 character",
-    }),
+    hint: z.string().optional().nullable(),
     notifEmail: z
         .string()
         .email({ message: "Invalid email format" })  // Ensure valid email format

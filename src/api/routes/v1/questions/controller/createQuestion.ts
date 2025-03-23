@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 export default async function createQuestion(req: Request, res: Response) {
-    const parsedResult = await createQuestionSchema.safeParseAsync(req.body);
+    try{
+        const parsedResult = await createQuestionSchema.safeParseAsync(req.body);
     if (!parsedResult.success) {
         apiResponseHandler(res, {
             statusCode: 400,
@@ -48,4 +49,11 @@ export default async function createQuestion(req: Request, res: Response) {
         message: 'success',
         data: question,
     });
+    }catch(error){
+        apiResponseHandler(res, {
+            statusCode: 500,
+            hasError: true,
+            message: 'Internal server error',
+        });
+    }
 }

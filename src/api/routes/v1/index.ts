@@ -5,7 +5,7 @@ import questionRouter from './questions';
 import answers from './answer';
 import username from './username';
 import contactRouter from './contact';
-
+import inbox from './inbox';
 
 
 const v1 = express.Router();
@@ -21,5 +21,6 @@ v1.use('/question',questionRouter);
 v1.use('/answer', answers);
 v1.use('/username', username);
 v1.use('/contact',contactRouter);
+v1.use('/inbox',inbox);
 export default v1;  
 

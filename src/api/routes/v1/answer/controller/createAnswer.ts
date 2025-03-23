@@ -5,23 +5,26 @@ import { prisma } from '../../../../../prisma/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function createAnswer(req: Request, res: Response) {
+    //print the request body
+    console.log(req.body);
     const schema = await createAnswerSchema.safeParseAsync(req.body);
     if(!schema.success){
+        //print the error
+        console.error(schema.error);
         apiResponseHandler(res, {
             statusCode: 400,
             hasError: true,
             message: 'Invalid request body',
         });
         return;
-    }   
+    } 
     let formatedRevealTime = null;
     if(schema.data.revealTime){
-       try{
+     try{
         const selectedTime = new Date(schema.data.revealTime);
         formatedRevealTime = selectedTime;
         const currentTime = new Date();
         const timeDifference = (selectedTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60); // difference in hours
-    
         if (isNaN(selectedTime.getTime()) || timeDifference < 2 || timeDifference > 48) {
             apiResponseHandler(res, {
                 statusCode: 400,
@@ -39,9 +42,6 @@ export default async function createAnswer(req: Request, res: Response) {
         return;
        }
     }
-   
-     
-    
 
     const question = await prisma.question.findUnique({where: {id: schema.data.questionId}});
     if(!question){
@@ -77,7 +77,6 @@ export default async function createAnswer(req: Request, res: Response) {
             selectedTime: formatedRevealTime,
         },        
     });
-    console.log("answer", answer);
 
     apiResponseHandler(res, {
         statusCode: 200,

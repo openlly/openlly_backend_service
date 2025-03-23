@@ -19,7 +19,7 @@
   },
   "main": "app.ts",
   "scripts": {
-    "dev": "NODE_ENV=local nodemon src/app.ts",
+    "dev": "NODE_ENV=local nodemon src/app.ts ",
     "build": "tsc --project ./",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
