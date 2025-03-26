@@ -3,7 +3,6 @@ import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { questionUrl } from '../../questions/utils/questionUtils';
 import { getOneUserUtilById } from '../../../../../utils/user/getOneUser';
-
 export const fetchUserInbox = async (req: Request, res: Response) => {
     const userId = req.userId
     if(!userId){
@@ -14,13 +13,43 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         });
         return;
     }
-    const user =await getOneUserUtilById({currentUserId: userId});
+    let fetchAll = true;
+    
+    const user = await getOneUserUtilById({currentUserId: userId});
+    if(user.id !=req.userId){
+        apiResponseHandler(res, {
+            statusCode: 401,
+            hasError: true,
+            message: 'Unauthorized',
+        });
+        return;
+    }
     const page = parseInt(req.query.page as string, 10) || 1;
     const limit = parseInt(req.query.limit as string, 10) || 10;
     const skip = (page - 1) * limit;
+    const filter = req.query.filter as string;
+    if(filter === 'unread'){
+        fetchAll = false;
+    }
+    // Get total message count
+    const totalMessages = await prisma.response.count({
+        where: {
+            answerTo: userId,
+        }
+    });
+    
+    // Get total unread message count
+    const totalUnreadMessages = await prisma.response.count({
+        where: {
+            answerTo: userId,
+            seen: false || null,
+        }
+    });
+    
     const answers = await prisma.response.findMany({
         where: {
             answerTo: userId,
+            ...(fetchAll ? {} : { seen: false || null }),
         },
         orderBy: {
             createdAt: 'desc',
@@ -52,7 +81,11 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
     apiResponseHandler(res, {
         statusCode: 200,
         hasError: false,
-        data: response,
+        data: {
+            messages: response,
+            totalMessages,
+            totalUnreadMessages
+        },
         message: 'success',
     });
 }

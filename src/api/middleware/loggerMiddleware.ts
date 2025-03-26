@@ -23,11 +23,22 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
   res.end = function (chunk?: any, encoding?: BufferEncoding, cb?: () => void) {
     if (chunk) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding || 'utf8'));
     const body = Buffer.concat(chunks).toString('utf8');
+    
+    let parsedBody = body;
+    if (body && res.getHeader('content-type')?.toString().includes('application/json')) {
+      try {
+        parsedBody = JSON.parse(body);
+      } catch (error) {
+        if (error instanceof SyntaxError && body === 'null') {
+          parsedBody = body;
+        }
+      }
+    }
     logger.info({
       res: {
         statusCode: res.statusCode,
         headers: res.getHeaders(),
-        body: body,
+        body: parsedBody,
       }
     }, 'Response sent');
     
