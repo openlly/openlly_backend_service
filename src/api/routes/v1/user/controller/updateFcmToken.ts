@@ -17,8 +17,7 @@ export default async function updateFcmToken(req: Request, res: Response) {
     });
   }
 
-
-
+  // Get the user by ID
   const existingUser = await getOneUserUtilById({
     currentUserId: req.userId,
   });
@@ -31,37 +30,21 @@ export default async function updateFcmToken(req: Request, res: Response) {
     });
   }
 
-  
+  // If fcmToken is null or empty, remove it from the database
+  const fcmTokenValue = schema.data.fcmToken?.trim() || null;
 
-  const userToUpdate = await prisma.user.findUnique({
-    where: { id: existingUser.id,fcmToken: schema.data.fcmToken },
-  });
-
-  if (!userToUpdate) {
-    return apiResponseHandler(res, {
-      statusCode: 404,
-      hasError: true,
-      message: 'User not found',
-    });
-  }
-
-  // Update the user's username in the database
   const updatedUser = await prisma.user.update({
     where: { id: existingUser.id },
-    data: { fcmToken: schema.data.fcmToken },
+    data: { fcmToken: fcmTokenValue },
   });
-
-  // Update the username usage record (if applicable)
- 
 
   // Update user in Redis
   await updateUserInRedis(existingUser.id, updatedUser);
 
-  // Respond with updated user
   return apiResponseHandler(res, {
     statusCode: 200,
     hasError: false,
-    message: 'User updated successfully',
+    message: fcmTokenValue ? 'FCM token updated successfully' : 'FCM token removed successfully',
     data: userResponseHandler(updatedUser),
   });
 }
