@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import * as serviceAccount from "../../../firebase_service_account.json"; // Adjust path
+import * as serviceAccount from "../../firebase_service_account.json"; // Adjust path
 
 if (!admin.apps.length) {
   admin.initializeApp({

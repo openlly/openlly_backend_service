@@ -8,4 +8,4 @@ oracle.key
 
 dist
 
-firebase_service_account.json
+src/firebase_service_account.json
