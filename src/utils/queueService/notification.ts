@@ -61,14 +61,14 @@ export const addToEmailQueue = async (email: EmailNotificationMessage) => {
 /** Function to Add Push Notification to Queue */
 export const addToPushQueue = async ({
   title,
-  subtitle,
+  body,
   badge = false,
   tokens = [],
   topic = null,
   data = {},
 }: {
   title: string;
-  subtitle: string;
+  body: string;
   badge?: boolean;
   tokens?: string[];
   topic?: string | null;
@@ -76,7 +76,7 @@ export const addToPushQueue = async ({
 }) => {
   const message: FirebaseNotificationMessage = {
     title: title || "Default Title",
-    body: subtitle || "Default body message",
+    body: body || "Default body message",
     badge: badge ? 1 : 0,
     tokens,
     topic,
@@ -89,7 +89,7 @@ export const addToPushQueue = async ({
         aps: {
           alert: {
             title: title || "Default Title",
-            body: subtitle || "Default body message",
+            body: body || "Default body message",
           },
           sound: "default",
           badge: badge ? 1 : 0,

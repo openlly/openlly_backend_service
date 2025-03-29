@@ -74,7 +74,7 @@ export default async function createAnswer(req: Request, res: Response) {
     if (user.fcmToken) {
         await addToPushQueue({
             title: "New message",
-            subtitle: "You have received a new message",
+            body: "You have received a new message", // Ensure subtitle is passed
             tokens: [user.fcmToken],
             data: {
                 click_action: 'FLUTTER_NOTIFICATION_CLICK',

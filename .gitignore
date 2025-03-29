@@ -7,3 +7,5 @@ questions.json
 oracle.key
 
 dist
+
+firebase_service_account.json

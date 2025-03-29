@@ -51,22 +51,22 @@ const handlePushNotification = async (pushMessage: any) => {
   try {
     console.log("Received push notification:", pushMessage);
 
-    const { title, subject, tokens, topic, data, android, apns } = pushMessage;
+    const { title, body, tokens, topic, data, android, apns } = pushMessage;
 
     // Validate required fields for push notification
     if ((!tokens || !Array.isArray(tokens) || tokens.length === 0) && !topic) {
       throw new Error("No valid tokens or topic provided for push notification");
     }
-    if (!title || !subject) {
+    if (!title || !body) {
       throw new Error("Missing required fields: title or subject");
     }
 
     // Define the notification payload
     var payload: any = {
-      notification: JSON.stringify({
+      notification: {
         title,
-        body: subject,
-      }),
+        body,
+      },
       data: data || {},
       android,
       apns,
@@ -79,7 +79,7 @@ const handlePushNotification = async (pushMessage: any) => {
       payload.tokens = tokens;
        
       const response = await firebasePush.sendEachForMulticast(payload);
-      console.log("Messages sent to tokens:", response.successCount, "succeeded,", response.failureCount, "failed");
+      console.log("Messages sent to tokens:", response.successCount, "succeeded,", response.failureCount, "failed","response ", response.responses);
     } else if (topic) {
       payload.topic = topic;
       // Send push notification to a topic

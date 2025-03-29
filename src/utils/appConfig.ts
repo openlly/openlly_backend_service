@@ -29,19 +29,6 @@ export const appConfig = {
     OPENAI_API_BASE_URL: process.env.OPENAI_API_BASE_URL || 'https://api.groq.com/openai/v1',
     OPENAI_MODEL: process.env.OPENAI_MODEL || 'llama3-8b-8192',
 }
-export const FirebaseAppConfig={
-    "type": process.env.FIREBASE_TYPE,
-    "project_id": process.env.FIREBASE_PROJECT_ID,
-    "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
-    "private_key": process.env.FIREBASE_PRIVATE_KEY,
-    "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-    "client_id": process.env.FIREBASE_CLIENT_ID,
-    "auth_uri": process.env.FIREBASE_AUTH_URI,
-    "token_uri": process.env.FIREBASE_TOKEN_URI,    
-    "auth_provider_x509_cert_url": process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-    "client_x509_cert_url": process.env.FIREBASE_CLIENT_X509_CERT_URL,
-    "universe_domain": process.env.FIREBASE_UNIVERSE_DOMAIN
-}
 
 enum Environment {
     Development = 'development',

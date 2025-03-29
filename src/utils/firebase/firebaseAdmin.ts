@@ -1,19 +1,10 @@
 import admin from "firebase-admin";
-import { FirebaseAppConfig } from "../../utils/appConfig";
-
-// Initialize Firebase Admin    
-const serviceAccount: admin.ServiceAccount = {
-  projectId: FirebaseAppConfig.project_id,
-  privateKey: FirebaseAppConfig.private_key?.replace(/\\n/g, "\n"), // Ensure correct key format
-  clientEmail: FirebaseAppConfig.client_email,
-};
+import * as serviceAccount from "../../../firebase_service_account.json"; // Adjust path
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
   });
 }
-
-
 
 export default admin;
