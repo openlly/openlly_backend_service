@@ -5,6 +5,7 @@ import multer from 'multer';
 import uploadProfileAvatar from './controller/uploadProfileAvatar';
 import updateUsername from './controller/updateUsername';
 import updateFcmToken from './controller/updateFcmToken';
+import deleteUser from './controller/deleteUser';
 
 
 const user = express.Router();
@@ -16,6 +17,8 @@ user.get('/', getOneUser);
 user.post('/uploadProfileImg', upload.single('file'), uploadProfileAvatar);
 user.patch('/updateUsername', updateUsername);
 user.patch('/updateFcmToken', updateFcmToken);
+//delete account
+user.delete('/delete', deleteUser);
 
 
 

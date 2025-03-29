@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
-import schema from '../validations/authValidations';
+import schema from '../../validations/authValidations';
 import { v4 as uuidv4 } from 'uuid';
-import apiResponseHandler from '../../../../../utils/apiResponseHandler'; 
-import { generateAccessToken, generateRefreshToken } from '../../../../../utils/jwt/jwtHelper'; // Import both token generators
-import { prisma } from '../../../../../prisma/prisma';
-import { createPassword } from '../../../../../utils/bcrypt/password';
-import { setUserInRedis } from '../../../../../redis/user/redisUserHelper'; // Helper function to save user and token in Redis
-import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
+import apiResponseHandler from '../../../../../../utils/apiResponseHandler';
+import { generateAccessToken, generateRefreshToken } from '../../../../../../utils/jwt/jwtHelper'; // Import both token generators
+import { prisma } from '../../../../../../prisma/prisma';
+import { createPassword } from '../../../../../../utils/bcrypt/password';
+import { setUserInRedis } from '../../../../../../redis/user/redisUserHelper'; // Helper function to save user and token in Redis
+import { userResponseHandler } from '../../../../../../utils/user/userResponseHelper';
 
 export default async function signupController(
-  req: Request,
-  res: Response,
-  next: NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) {
     try {
         const { email, password } = req.body;
@@ -62,9 +62,9 @@ export default async function signupController(
             hasError: false,
             message: 'Account created successfully',
             data: {
-                accessToken:token,       // The newly generated Access Token
+                accessToken: token,       // The newly generated Access Token
                 refreshToken,  // The newly generated Refresh Token
-                user:  userResponseHandler(user),// Remove password from the user object
+                user: userResponseHandler(user),// Remove password from the user object
             }
         });
     } catch (error) {
