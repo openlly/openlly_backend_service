@@ -27,7 +27,9 @@ export async function generateOtp(req: Request, res: Response) {
     const email = schema.data.email;
     // Generate a 6-digit OTP
     const otp = crypto.randomInt(100000, 1000000).toString(); // 6-digit OTP    // Send OTP via email
-    addToEmailQueue(email, "Verify your email address", emailVerificationOtpTemplate(otp, isUserExist));
+    addToEmailQueue({
+      to: email, subject: "Verify your email address", html: emailVerificationOtpTemplate(otp, isUserExist)
+    });
     // Store OTP in Redis with expiration (same TTL as magic link)
     await redis.set(`${email}:otp`, otp, 'EX', appConfig.MAGIC_LINK_TTL);
 

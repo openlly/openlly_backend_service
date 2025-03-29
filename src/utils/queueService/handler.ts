@@ -1,25 +1,93 @@
 import { ConsumeMessage } from "amqplib";
-import { INotification, NotificationType } from "./notification";
+import { INotificationMessage, NotificationType } from "./notification";
 import { sendEmail } from "../emailer/node-emailer";
+import admin from "../../utils/firebase/firebaseAdmin"
 
-export const handleIncomingNotification = (msg: ConsumeMessage) => {
-    try {
-      const parsedMessage:INotification = JSON.parse(msg?.content?.toString());
-      console.log(`🚀 ~ file: handler.ts:9 ~ handleIncomingNotification ~ parsedMessage`, parsedMessage)
-      switch(parsedMessage.type){
-        case NotificationType.email:
-            try{
-                const {to, subject, html: emailHtml} = parsedMessage.message as {to: string, subject: string, html: string};
-                sendEmail(to, subject, emailHtml);
-            }catch(e){
-                console.error("Error while sending email", e);
-            }
-            break;
-        case NotificationType.push:
-            break;
-      }
-    } catch (error) {
-      console.error(`Error While Parsing the message`,error);
+export const handleIncomingNotification = async (msg: ConsumeMessage) => {
+  try {
+    if (!msg?.content) {
+      console.error("Received an empty message");
+      return;
     }
-  };
+
+    const parsedMessage: INotificationMessage<any> = JSON.parse(
+      msg.content.toString()
+    );
+
+    switch (parsedMessage.type) {
+      case NotificationType.email:
+        await handleEmailNotification(parsedMessage.message);
+        break;
+
+      case NotificationType.push:
+        await handlePushNotification(parsedMessage.message);
+        break;
+
+      default:
+        console.warn(`Unknown notification type: ${parsedMessage.type}`);
+    }
+  } catch (error) {
+    console.error(`Error while parsing the message`, error);
+  }
+};
+
+/** Handles Email Notification */
+const handleEmailNotification = async (emailMessage: {
+  to: string;
+  subject: string;
+  html: string;
+}) => {
+  try {
+    const { to, subject, html } = emailMessage;
+    await sendEmail(to, subject, html);
+    console.log(`Email sent to ${to}`);
+  } catch (error) {
+    console.error("Error while sending email", error);
+  }
+};
+
+/** Handles Push Notification (Placeholder for now) */
+const handlePushNotification = async (pushMessage: any) => {
+  try {
+    console.log("Received push notification:", pushMessage);
+
+    const { title, subject, tokens, topic, data, android, apns } = pushMessage;
+
+    // Validate required fields for push notification
+    if ((!tokens || !Array.isArray(tokens) || tokens.length === 0) && !topic) {
+      throw new Error("No valid tokens or topic provided for push notification");
+    }
+    if (!title || !subject) {
+      throw new Error("Missing required fields: title or subject");
+    }
+
+    // Define the notification payload
+    var payload: any = {
+      notification: JSON.stringify({
+        title,
+        body: subject,
+      }),
+      data: data || {},
+      android,
+      apns,
+    };
+    
+    const firebasePush = admin.messaging();
+
+    if (tokens && tokens.length > 0) {
+      // Send push notification to multiple tokens
+      payload.tokens = tokens;
+       
+      const response = await firebasePush.sendEachForMulticast(payload);
+      console.log("Messages sent to tokens:", response.successCount, "succeeded,", response.failureCount, "failed");
+    } else if (topic) {
+      payload.topic = topic;
+      // Send push notification to a topic
+      const response = await firebasePush.sendEach(payload);
+      console.log("Topic message sent:", response);
+    }
+  } catch (error) {
+    console.error("Error while handling push notification:", error instanceof Error ? error.message : error);
+  }
+};
 

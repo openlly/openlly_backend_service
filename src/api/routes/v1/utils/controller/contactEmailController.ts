@@ -20,7 +20,9 @@ export const contactEmailController = async (req: Request, res: Response) => {
             return;
         }
         //send email
-        await addToEmailQueue(appConfig.ADMIN_EMAIL || "admin", "You have a new message", contactUsTemplate(schema.data.name, schema.data.email, schema.data.message));
+        await addToEmailQueue({
+            to: appConfig.ADMIN_EMAIL || "admin", subject: "You have a new message", html: contactUsTemplate(schema.data.name, schema.data.email, schema.data.message)
+        });
         apiResponseHandler(res, {
             statusCode: 200,
             hasError: false,

@@ -1,4 +1,4 @@
-import { Response, Request } from 'express';  
+import { Response, Request } from 'express';
 import { prisma } from '../../../../../prisma/prisma';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { addToEmailQueue } from '../../../../../utils/queueService/notification';
@@ -7,7 +7,7 @@ import { messageAcknowledgmentTemplate } from '../../../../../templates/message-
 import { questionUrl } from '../../questions/utils/questionUtils';
 
 export default async function inboxSeenSingle(req: Request, res: Response) {
-    const {params: { id: answerId } } = req;
+    const { params: { id: answerId } } = req;
     const currentUser = await getOneUserUtilById({ currentUserId: req.userId });
     if (!currentUser) {
         return apiResponseHandler(res, {
@@ -43,7 +43,7 @@ export default async function inboxSeenSingle(req: Request, res: Response) {
     // Update the message to 'seen'
     await prisma.response.update({
         where: { id: answerId },
-        data: { seen: true,ackSentAt: new Date() },
+        data: { seen: true, ackSentAt: new Date() },
     });
 
     // Send acknowledgment email if necessary
@@ -51,7 +51,7 @@ export default async function inboxSeenSingle(req: Request, res: Response) {
         const questionId = message.questionId;
         //get question detail using question Title
         const questionDetail = await prisma.question.findUnique({ where: { id: questionId } });
-        if(questionDetail !== null){
+        if (questionDetail !== null) {
             const url = questionUrl(questionDetail.questionAbrbreviation, currentUser.username);
             const emailContent = messageAcknowledgmentTemplate(
                 currentUser.username,
@@ -59,12 +59,14 @@ export default async function inboxSeenSingle(req: Request, res: Response) {
                 url,
             );
             addToEmailQueue(
-                message.ackEmail,
-                `From Openlly, your message has been seen by ${currentUser.username}`,
-                emailContent,
+                {
+                    to: message.ackEmail,
+                    subject: `From Openlly, your message has been seen by ${currentUser.username}`,
+                    html: emailContent,
+                }
             );
         }
-       
+
     }
 
     // Send response

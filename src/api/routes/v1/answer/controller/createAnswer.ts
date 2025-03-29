@@ -1,90 +1,91 @@
-import {Response, Request} from 'express';  
-import {createAnswerSchema} from '../schema/answerSchema';
+import { Response, Request } from 'express';
+import { createAnswerSchema } from '../schema/answerSchema';
 import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { prisma } from '../../../../../prisma/prisma';
 import { v4 as uuidv4 } from 'uuid';
+import { addToPushQueue } from "../../../../../utils/queueService/notification";
+import { getOneUserUtilById } from "../../../../../utils/user/getOneUser";
 
 export default async function createAnswer(req: Request, res: Response) {
-    //print the request body
-    console.log(req.body);
     const schema = await createAnswerSchema.safeParseAsync(req.body);
-    if(!schema.success){
-        //print the error
+    if (!schema.success) {
         console.error(schema.error);
-        apiResponseHandler(res, {
+        return apiResponseHandler(res, {
             statusCode: 400,
             hasError: true,
             message: 'Invalid request body',
         });
-        return;
-    } 
-    let formatedRevealTime = null;
-    if(schema.data.revealTime){
-     try{
-        const selectedTime = new Date(schema.data.revealTime);
-        formatedRevealTime = selectedTime;
+    }
+
+    const { questionId, answerTo, content, hint, notifEmail, userIdentity, revealTime } = schema.data;
+
+    let formattedRevealTime: Date | null = null;
+    if (revealTime) {
+        const selectedTime = new Date(revealTime);
         const currentTime = new Date();
-        const timeDifference = (selectedTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60); // difference in hours
+        const timeDifference = (selectedTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60);
+
         if (isNaN(selectedTime.getTime()) || timeDifference < 2 || timeDifference > 48) {
-            apiResponseHandler(res, {
+            return apiResponseHandler(res, {
                 statusCode: 400,
                 hasError: true,
                 message: 'Invalid reveal time. It must be between 2 and 48 hours from now.',
             });
-            return;
         }
-       }catch(e){
-        apiResponseHandler(res, {
-            statusCode: 400,
-            hasError: true,
-            message: 'Invalid reveal time. It must be between 2 and 48 hours from now.',
-        });
-        return;
-       }
+        formattedRevealTime = selectedTime;
     }
 
-    const question = await prisma.question.findUnique({where: {id: schema.data.questionId}});
-    if(!question){
-        apiResponseHandler(res, {
+    const [question, user] = await Promise.all([
+        prisma.question.findUnique({ where: { id: questionId } }),
+        getOneUserUtilById({ currentUserId: answerTo })
+    ]);
+
+    if (!question) {
+        return apiResponseHandler(res, {
             statusCode: 404,
             hasError: true,
             message: 'Question not found',
         });
-        return;
     }
-    
-    const user = await prisma.user.findUnique({where: {id: schema.data.answerTo}});
-    if(!user){
-        apiResponseHandler(res, {
+
+    if (!user) {
+        return apiResponseHandler(res, {
             statusCode: 404,
             hasError: true,
             message: 'User not found',
         });
-        return;
     }
 
-    const answer = await prisma.response.create({
+    await prisma.response.create({
         data: {
             id: uuidv4(),
-            content: schema.data.content,
-            questionId: schema.data.questionId,
-            answerTo: schema.data.answerTo,
+            content,
+            questionId,
+            answerTo,
             createdAt: new Date(),
             updatedAt: new Date(),
-            hint: schema.data.hint,
-            ackEmail: schema.data.notifEmail,
-            sendIdentity: schema.data.userIdentity,
-            selectedTime: formatedRevealTime,
-        },        
+            hint,
+            ackEmail: notifEmail,
+            sendIdentity: userIdentity,
+            selectedTime: formattedRevealTime,
+        },
     });
 
-    apiResponseHandler(res, {
+    if (user.fcmToken) {
+        await addToPushQueue({
+            title: "New message",
+            subtitle: "You have received a new message",
+            tokens: [user.fcmToken],
+            data: {
+                click_action: 'FLUTTER_NOTIFICATION_CLICK',
+                type: 'inbox',
+            },
+        });
+    }
+
+    return apiResponseHandler(res, {
         statusCode: 200,
         hasError: false,
-        message: 'success',
-        data: null,
-    }); 
-    
-   
-
+        message: 'Success',
+    });
 }
