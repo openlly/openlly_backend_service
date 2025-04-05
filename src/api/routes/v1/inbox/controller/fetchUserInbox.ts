@@ -35,6 +35,9 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
     const totalMessages = await prisma.response.count({
         where: {
             answerTo: userId,
+            reports: {
+                none: {},
+            },
         }
     });
     
@@ -43,6 +46,9 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         where: {
             answerTo: userId,
             seen: false || null,
+            reports: {
+                none: {},
+            },
         }
     });
     
@@ -50,6 +56,9 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         where: {
             answerTo: userId,
             ...(fetchAll ? {} : { seen: false || null }),
+            reports: {
+                none: {},
+            },
         },
         orderBy: {
             createdAt: 'desc',
