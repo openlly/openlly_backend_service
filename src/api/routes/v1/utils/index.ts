@@ -5,6 +5,7 @@ import { fetchReportByInboxId } from './controller/fetchReportByInboxid';
 import createReport from './controller/createReport';
 import rateLimit from 'express-rate-limit';
 import { contactEmailController } from './controller/contactEmailController';
+import avatarRouter from './avatar';
 
 const utilsRouter = express.Router();
 
@@ -37,5 +38,6 @@ contactRouter.post("/", contactEmailController);
 
 // Mount the contact router separately without auth middleware
 utilsRouter.use("/contact", contactRouter);
+utilsRouter.use("/avatar", avatarRouter);
 
 export default utilsRouter;

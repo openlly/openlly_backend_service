@@ -23,7 +23,14 @@ export async function generateOtp(req: Request, res: Response) {
 
     const user = await getOneUserByEmail({ email: schema.data.email });
     const isUserExist = user ? true : false;
-
+    //check if user is deleted
+    if (user?.deleteAt) {
+      return apiResponseHandler(res, {
+        statusCode: 400,
+        hasError: true,
+        message: 'User is deleted,contact support',
+      });
+    }
     const email = schema.data.email;
     // Generate a 6-digit OTP
     const otp = crypto.randomInt(100000, 1000000).toString(); // 6-digit OTP    // Send OTP via email

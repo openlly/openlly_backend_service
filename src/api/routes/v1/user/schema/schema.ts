@@ -9,3 +9,9 @@ export const updateUserSchema = z.object({
 export const updateFcmTokenSchema = z.object({
     fcmToken: z.string().optional(),
 });
+
+
+export const uploadProfileAvatarSchema = z.object({
+    imageUrl: z.string(),
+    backgroundColor: z.string(),
+});

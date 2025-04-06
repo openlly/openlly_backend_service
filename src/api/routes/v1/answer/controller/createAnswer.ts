@@ -5,6 +5,7 @@ import { prisma } from '../../../../../prisma/prisma';
 import { v4 as uuidv4 } from 'uuid';
 import { addToPushQueue } from "../../../../../utils/queueService/notification";
 import { getOneUserUtilById } from "../../../../../utils/user/getOneUser";
+import { generateRandomUserProfileImage, generateRandomUserName, generateRandomUserBackgroundColor } from '../../../../../utils/user/random_user_name';
 
 export default async function createAnswer(req: Request, res: Response) {
     const schema = await createAnswerSchema.safeParseAsync(req.body);
@@ -17,7 +18,13 @@ export default async function createAnswer(req: Request, res: Response) {
         });
     }
 
-    const { questionId, answerTo, content, hint, notifEmail, userIdentity, revealTime } = schema.data;
+    const { 
+        questionId, answerTo, content, hint, notifEmail, userIdentity, revealTime,
+        country, region, city, latitude, longitude, timezone,
+        device, deviceType, deviceModel, deviceVendor, deviceId, deviceToken, os, browser,
+        ipAddress, userAgent, isp, org, asn, asnOrg,
+        proxy, hosting, mobile
+    } = schema.data;
 
     let formattedRevealTime: Date | null = null;
     if (revealTime) {
@@ -55,7 +62,49 @@ export default async function createAnswer(req: Request, res: Response) {
             message: 'User not found',
         });
     }
-
+    const metadata = await prisma.anonymousUserMetadata.create({
+        data: {
+            anonymousUserId: uuidv4(),
+            ipAddress,
+            userAgent,
+            isp,
+            org,
+            asn,
+            asnOrg,
+            proxy,
+            hosting,
+            mobile,
+            country,
+            region,
+            city,
+            latitude,
+            longitude,
+            timezone,
+            device,
+            deviceType,
+            deviceModel,
+            deviceVendor,
+            deviceId,
+            deviceToken,
+            os,
+            browser,
+        },
+    });
+    //create anonymous user
+    const anonymousUser = await prisma.anonymousUser.create({
+        data: {
+            id: metadata.anonymousUserId,
+            username: generateRandomUserName(),
+            imageUrl: generateRandomUserProfileImage(),
+            backgroundColor: generateRandomUserBackgroundColor(),
+            metadata: {
+                connect: {
+                    id: metadata.id
+                }
+            }
+        },
+    });
+    
     await prisma.response.create({
         data: {
             id: uuidv4(),
@@ -68,8 +117,14 @@ export default async function createAnswer(req: Request, res: Response) {
             ackEmail: notifEmail,
             sendIdentity: userIdentity,
             selectedTime: formattedRevealTime,
+            anonymousUser: {
+                connect: {
+                    id: anonymousUser.id
+                }
+            }
         },
     });
+
 
     if (user.fcmToken) {
         await addToPushQueue({

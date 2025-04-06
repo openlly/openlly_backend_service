@@ -9,16 +9,15 @@ import deleteUser from './controller/deleteUser';
 
 
 const user = express.Router();
-const upload = multer({ limits: { fileSize: 2000000 } });
 
 user.use(authMiddleware);
 
 user.get('/', getOneUser);
-user.post('/uploadProfileImg', upload.single('file'), uploadProfileAvatar);
+user.post('/uploadProfileImg', uploadProfileAvatar);
 user.patch('/updateUsername', updateUsername);
 user.patch('/updateFcmToken', updateFcmToken);
 //delete account
-user.delete('/delete', deleteUser);
+user.delete('/', deleteUser);
 
 
 

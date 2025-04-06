@@ -17,6 +17,8 @@ model User {
   profileImg String?   @db.VarChar(255)
   fcmToken   String?
   deleteAt   DateTime?
+  backgroundColor String?
+
 }
 
 model Question {
@@ -46,6 +48,54 @@ model Response {
 
   // Define only one side of the relation with `references`
   reports Report[]
+
+  //define anonymous user
+  anonymousUser AnonymousUser? @relation(fields: [anonymousUserId], references: [id])
+  anonymousUserId String?
+}
+
+model AnonymousUser {
+  id String @id @default(uuid())
+  username String @unique
+  usedAt DateTime?
+  responses Response[]
+  imageUrl String?
+  backgroundColor String?
+  metadata AnonymousUserMetadata? @relation(fields: [metadataId], references: [id])
+  metadataId String?
+}
+
+model AnonymousUserMetadata {
+  id String @id @default(uuid())
+  anonymousUserId String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  location String?
+  device String?
+  browser String?
+  os String?
+  deviceType String?
+  deviceModel String?
+  deviceVendor String?
+  deviceId String?
+  deviceToken String?
+  country String?
+  region String?
+  city String?
+  latitude Float?
+  longitude Float?
+  timezone String?
+  isp String?
+  org String?
+  asn String?
+  asnOrg String?
+  proxy Boolean?
+  hosting Boolean?
+  mobile Boolean?
+
+  AnonymousUser AnonymousUser[]
 }
 
 model Username {
@@ -63,4 +113,13 @@ model Report {
 
   // Define `references` only on one side
   response Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+}
+
+
+model Avatar {
+  id String @id @default(uuid())
+  imageUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deleteAt DateTime?
 }

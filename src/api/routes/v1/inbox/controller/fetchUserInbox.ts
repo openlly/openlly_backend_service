@@ -63,6 +63,9 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
         orderBy: {
             createdAt: 'desc',
         },
+        include: {
+            anonymousUser: true
+        },
         skip,
         take: limit,
     });
@@ -85,6 +88,7 @@ export const fetchUserInbox = async (req: Request, res: Response) => {
             ...answer,
             seen: answer.seen === null ? false : answer.seen,
             question: question ? { ...question, url: questionUrl(question.questionAbrbreviation, user.username) } : null,
+            anonymousUser: answer.anonymousUser
         };
     });
     apiResponseHandler(res, {

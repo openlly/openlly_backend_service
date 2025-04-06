@@ -3,28 +3,19 @@ import apiResponseHandler from '../../../../../utils/apiResponseHandler';
 import { prisma } from '../../../../../prisma/prisma';
 
 import { userResponseHandler } from '../../../../../utils/user/userResponseHelper';
-import {uploadImage} from '../../../../../utils/storage/cloudinary';
-
+import { uploadProfileAvatarSchema } from '../schema/schema';
 
 export default async function uploadProfileAvatar(req: Request, res: Response) {
-    //check if file exists
-    if(!req.file){
+    //validate request body
+    const reqBody = await uploadProfileAvatarSchema.safeParseAsync(req.body);
+    if(!reqBody.success){
         apiResponseHandler(res, {
             statusCode: 400,
             hasError: true,
-            message: 'File does not exist',
+            message: 'Invalid request body',
         });
         return;
     }
-    //check if file is an image
-    if(!req.file.mimetype.startsWith('image/')){ 
-        apiResponseHandler(res, {
-            statusCode: 400,
-            hasError: true,
-            message: 'File is not an image',
-        });
-        return;
-    }   
     const currentUserId = req.userId
     if(!currentUserId){
         apiResponseHandler(res, {
@@ -34,28 +25,7 @@ export default async function uploadProfileAvatar(req: Request, res: Response) {
         });
         return;
     }
-    const url = await uploadImage(req.file);    
-    
-    
-    
-    if (!url) {
-        apiResponseHandler(res, {
-            statusCode: 500,
-            hasError: true,
-            message: 'Error uploading image',
-        });
-        return;
-    }
-
-
-    
-   
-
-   
-  
-   
-    
-    
+    const {imageUrl, backgroundColor} = reqBody.data;
 
     
     //update user
@@ -64,7 +34,8 @@ export default async function uploadProfileAvatar(req: Request, res: Response) {
             id: currentUserId,
         },
         data: {
-            profileImg: url,
+            profileImg: imageUrl,
+            backgroundColor: backgroundColor,
         },
     });
     apiResponseHandler(res, {
