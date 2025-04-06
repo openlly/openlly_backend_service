@@ -62,6 +62,8 @@ export default async function createAnswer(req: Request, res: Response) {
             message: 'User not found',
         });
     }
+
+    // Create metadata first
     const metadata = await prisma.anonymousUserMetadata.create({
         data: {
             anonymousUserId: uuidv4(),
@@ -90,20 +92,43 @@ export default async function createAnswer(req: Request, res: Response) {
             browser,
         },
     });
-    //create anonymous user
-    const anonymousUser = await prisma.anonymousUser.create({
-        data: {
-            id: metadata.anonymousUserId,
-            username: generateRandomUserName(),
-            imageUrl: generateRandomUserProfileImage(),
-            backgroundColor: generateRandomUserBackgroundColor(),
-            metadata: {
-                connect: {
-                    id: metadata.id
+
+    // Retry creating anonymous user up to 3 times if username collision occurs
+    let anonymousUser;
+    let retries = 0;
+    const maxRetries = 3;
+
+    while (retries < maxRetries) {
+        try {
+            anonymousUser = await prisma.anonymousUser.create({
+                data: {
+                    id: metadata.anonymousUserId,
+                    username: generateRandomUserName(),
+                    imageUrl: generateRandomUserProfileImage(),
+                    backgroundColor: generateRandomUserBackgroundColor(),
+                    metadata: {
+                        connect: {
+                            id: metadata.id
+                        }
+                    }
+                },
+            });
+            break; // Success - exit the loop
+        } catch (error: any) {
+            if (error?.code === 'P2002' && error?.meta?.target?.includes('username')) {
+                retries++;
+                if (retries === maxRetries) {
+                    return apiResponseHandler(res, {
+                        statusCode: 500,
+                        hasError: true,
+                        message: 'Failed to generate unique username',
+                    });
                 }
+                continue; // Try again with new random username
             }
-        },
-    });
+            throw error; // Re-throw if it's a different error
+        }
+    }
     
     await prisma.response.create({
         data: {
@@ -119,12 +144,11 @@ export default async function createAnswer(req: Request, res: Response) {
             selectedTime: formattedRevealTime,
             anonymousUser: {
                 connect: {
-                    id: anonymousUser.id
+                    id: anonymousUser!.id
                 }
             }
         },
     });
-
 
     if (user.fcmToken) {
         await addToPushQueue({
